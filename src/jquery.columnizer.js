@@ -50,6 +50,9 @@
 		var $cache = $('<div></div>'); // this is where we'll put the real content
 		var lastWidth = 0;
 		var columnizing = false;
+		
+		var adjustment = 0;
+		
 		$cache.append($(this).contents().clone(true));
 	    
 	    // images loading after dom load
@@ -372,8 +375,14 @@
 						// the last column is the tallest
 						// so allow columns to be taller
 						// and retry
-						targetHeight = targetHeight + 30;
-						if(loopCount == maxLoops-1) maxLoops++;
+						adjustment += 30;
+						if(adjustment < 100){
+							targetHeight = targetHeight + 30;
+							if(loopCount == maxLoops-1) maxLoops++;
+						}else{
+							debugger;
+							loopCount = maxLoops;
+						}
 					}else if(max - min > 30){
 						// too much variation, try again
 						targetHeight = avgH + 30;
