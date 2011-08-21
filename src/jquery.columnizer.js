@@ -189,7 +189,7 @@
 			$inBox.data("columnizing", true);
 			
 			$inBox.empty();
-			$inBox.append($("<div class='first last column' style='width:98%; padding: 3px; float: " + options.columnFloat + ";'></div>")); //"
+			$inBox.append($("<div class='first last column' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children().eq($inBox.children().length-1);
 			$destroyable = $cache.clone(true);
 			if(options.overflow){
@@ -257,7 +257,7 @@
 			$inBox.data("columnizing", true);
 			
 			$inBox.empty();
-			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; padding: 3px; float: " + options.columnFloat + ";'></div>")); //"
+			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children(":last");
 			$col.append($cache.clone());
 			maxHeight = $col.height();
