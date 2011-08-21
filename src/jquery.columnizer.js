@@ -1,6 +1,6 @@
-// version 1.4.0
+// version 1.5.0
 // http://welcome.totheinter.net/columnizer-jquery-plugin/
-// created by: Adam Wulf adam.wulf@gmail.com
+// created by: Adam Wulf @adamwulf, adam.wulf@gmail.com
 
 (function($){
 
