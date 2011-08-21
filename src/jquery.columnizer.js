@@ -8,7 +8,7 @@
 
 
 	var defaults = {
-		// default width of columnx
+		// default width of columns
 		width: 400,
 		// optional # of columns instead of width
 		columns : false,
@@ -36,6 +36,13 @@
 		accuracy : false
 	};
 	var options = $.extend(defaults, options);
+	
+	if(typeof(options.width) == "string"){
+		options.width = parseInt(options.width);
+		if(isNaN(options.width)){
+			options.width = defaults.width;
+		}
+	}
 
     return this.each(function() {
 	    var $inBox = options.target ? $(options.target) : $(this);
