@@ -27,7 +27,7 @@
 		// run slow. so flip this to true if it's causing delays
 		ignoreImageLoading : true,
 		// should columns float left or right
-		float : "left",
+		columnFloat : "left",
 		// ensure the last column is never the tallest column
 		lastNeverTallest : false,
 		// (int) the minimum number of characters to jump when splitting
@@ -189,7 +189,7 @@
 			$inBox.data("columnizing", true);
 			
 			$inBox.empty();
-			$inBox.append($("<div class='first last column' style='width:98%; padding: 3px; float: " + options.float + ";'></div>")); //"
+			$inBox.append($("<div class='first last column' style='width:98%; padding: 3px; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children().eq($inBox.children().length-1);
 			$destroyable = $cache.clone(true);
 			if(options.overflow){
@@ -257,7 +257,7 @@
 			$inBox.data("columnizing", true);
 			
 			$inBox.empty();
-			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; padding: 3px; float: " + options.float + ";'></div>")); //"
+			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; padding: 3px; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children(":last");
 			$col.append($cache.clone());
 			maxHeight = $col.height();
@@ -291,7 +291,7 @@
 					/* create column */
 					var className = (i == 0) ? "first column" : "column";
 					var className = (i == numCols - 1) ? ("last " + className) : className;
-					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.float + ";'></div>")); //"
+					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
 				
 				// fill all but the last column (unless overflowing)
@@ -299,7 +299,7 @@
 				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.children().length){
 					if($inBox.children().length <= i){
 						// we ran out of columns, make another
-						$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.float + ";'></div>")); //"
+						$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 					}
 					var $col = $inBox.children().eq(i);
 					columnize($col, $destroyable, $col, targetHeight);
