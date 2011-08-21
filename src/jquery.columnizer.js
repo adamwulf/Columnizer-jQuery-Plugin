@@ -43,7 +43,7 @@
 		var $cache = $('<div></div>'); // this is where we'll put the real content
 		var lastWidth = 0;
 		var columnizing = false;
-		$cache.append($(this).children().clone(true));
+		$cache.append($(this).contents().clone(true));
 	    
 	    // images loading after dom load
 	    // can screw up the column heights,
@@ -196,7 +196,7 @@
 				targetHeight = options.overflow.height;
 				columnize($col, $destroyable, $col, targetHeight);
 				// make sure that the last item in the column isn't a "dontend"
-				if(!$destroyable.children().find(":first-child").hasClass("dontend")){
+				if(!$destroyable.contents().find(":first-child").hasClass("dontend")){
 					split($col, $destroyable, $col, targetHeight);
 				}
 				
@@ -296,7 +296,7 @@
 				
 				// fill all but the last column (unless overflowing)
 				var i = 0;
-				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.children().length){
+				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.contents().length){
 					if($inBox.children().length <= i){
 						// we ran out of columns, make another
 						$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
@@ -304,7 +304,7 @@
 					var $col = $inBox.children().eq(i);
 					columnize($col, $destroyable, $col, targetHeight);
 					// make sure that the last item in the column isn't a "dontend"
-					if(!$destroyable.children().find(":first-child").hasClass("dontend")){
+					if(!$destroyable.contents().find(":first-child").hasClass("dontend")){
 						split($col, $destroyable, $col, targetHeight);
 					}else{
 //						alert("not splitting a dontend");
@@ -337,12 +337,12 @@
 						var overflow = $(options.overflow.id)[0];
 						overflow.innerHTML = html;
 					}else{
-						$(options.overflow.id).empty().append($destroyable.children().clone(true));
+						$(options.overflow.id).empty().append($destroyable.contents().clone(true));
 					}
 				}else if(!scrollHorizontally){
 					// the last column in the series
 					$col = $inBox.children().eq($inBox.children().length-1);
-					while($destroyable.children().length) $col.append($destroyable.children(":first"));
+					while($destroyable.contents().length) $col.append($destroyable.contents(":first"));
 					var afterH = $col.height();
 					var diff = afterH - targetHeight;
 					var totalH = 0;
