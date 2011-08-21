@@ -6,9 +6,6 @@
 	<meta name="author" content="Adam Wulf, Matt Wilson">
 	<!-- Date: 2008-07-12 -->
 	<style>
-		.column{ padding: 5px; }
-
-
 		body { font-size: 9pt; }
 		#wrapper { margin: 0px 100px; }
 		.wide, .thin { clear:both; }
@@ -18,14 +15,10 @@
 	<script>
 		$(function(){
 			$('.wide').columnize({
-				width : 500,
+				columns : 5,
 				buildOnce : true,
-				overflow : {
-					id : ".thin",
-					height : 300,
-					doneFunc : function(){
-						$('.thin').columnize({ width : 300 });
-					}
+				doneFunc : function(){
+					$('.wide .column').width("20%");
 				}
 			})
 		});
