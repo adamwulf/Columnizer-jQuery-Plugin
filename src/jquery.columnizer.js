@@ -166,7 +166,7 @@
 			if($pullOutHere.children().length){
 				$cloneMe = $pullOutHere.children(":first");
 				$clone = $cloneMe.clone(true);
-				if($clone.prop("nodeType") == 1 && !$clone.hasClass("dontend")){ 
+				if($clone.nodeType == 1 && !$clone.hasClass("dontend")){ 
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < height + 20){
 						$cloneMe.remove();
