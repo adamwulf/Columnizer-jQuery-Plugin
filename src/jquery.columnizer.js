@@ -301,7 +301,8 @@
 					/* create column */
 					var className = (i == 0) ? "first columnized-column" : "columnized-column";
 					var className = (i == numCols - 1) ? ("last " + className) : className;
-					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
+          var col_width = options.columns ? (Math.floor(100 / numCols) - 1) + "%" : options.width + "px";
+					$inBox.append($("<div class='" + className + "' style='width:" + col_width + "; float: " + options.columnFloat + ";'></div>")); //"
 				}
 				
 				// fill all but the last column (unless overflowing)
