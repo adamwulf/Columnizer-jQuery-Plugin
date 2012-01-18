@@ -301,7 +301,7 @@
 					/* create column */
 					var className = (i == 0) ? "first columnized-column" : "columnized-column";
 					var className = (i == numCols - 1) ? ("last " + className) : className;
-          var col_width = options.columns ? (Math.floor(100 / numCols) - 1) + "%" : options.width + "px";
+          var col_width = options.columns ? Math.floor(100 / numCols) + "%" : options.width + "px";
 					$inBox.append($("<div class='" + className + "' style='width:" + col_width + "; float: " + options.columnFloat + ";'></div>")); //"
 				}
 				
