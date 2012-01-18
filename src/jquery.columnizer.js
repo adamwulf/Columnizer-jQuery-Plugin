@@ -199,7 +199,7 @@
 			$inBox.data("columnizing", true);
 			
 			$inBox.empty();
-			$inBox.append($("<div class='first last column' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
+			$inBox.append($("<div class='first last columnized-column' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children().eq($inBox.children().length-1);
 			$destroyable = $cache.clone(true);
 			if(options.overflow){
@@ -299,7 +299,7 @@
 				// create the columns
 				for (var i = 0; i < numCols; i++) {
 					/* create column */
-					var className = (i == 0) ? "first column" : "column";
+					var className = (i == 0) ? "first columnized-column" : "columnized-column";
 					var className = (i == numCols - 1) ? ("last " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
@@ -411,8 +411,8 @@
 				}
 				$inBox.append($("<br style='clear:both;'>"));
 			}
-			$inBox.find('.column').find(':first.removeiffirst').remove();
-			$inBox.find('.column').find(':last.removeiflast').remove();
+			$inBox.find('.columnized-column').find(':first.removeiffirst').remove();
+			$inBox.find('.columnized-column').find(':last.removeiflast').remove();
 			$inBox.data("columnizing", false);
 
 			if(options.overflow){
