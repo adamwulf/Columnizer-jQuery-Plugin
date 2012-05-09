@@ -251,6 +251,8 @@
 		}
 		
 		function columnizeIt() {
+			//reset adjustment var
+			adjustment = 0;
 			if(lastWidth == $inBox.width()) return;
 			lastWidth = $inBox.width();
 			
