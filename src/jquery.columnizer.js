@@ -169,10 +169,10 @@
 		
 		function split($putInHere, $pullOutHere, $parentColumn, height){
 			if($pullOutHere.children().length){
-				$cloneMe = $pullOutHere.children(":first");
+				var $cloneMe = $pullOutHere.children(":first");
 				//
 				// clone the node with all data and events
-				$clone = $cloneMe.clone(true);
+				var $clone = $cloneMe.clone(true);
 				//
 				// need to support both .prop and .attr if .prop doesn't exist.
 				// this is for backwards compatibility with older versions of jquery.
