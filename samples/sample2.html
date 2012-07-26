@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Columnizer JQuery Plugin sample page 3</title>
+	<title>Columnizer JQuery Plugin sample page 2</title>
 	<meta name="generator" content="TextMate http://macromates.com/">
 	<meta name="author" content="Matt Wilson">
 	<!-- Date: 2008-07-12 -->
@@ -19,11 +19,12 @@
 		blockquote { font-style: italic; margin-left: 10px; border-left:2px solid #EFEFEF; padding-left: 8px;}
 	</style>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		$(function(){
-			$('.wide').columnize({columns:2});
-			$('.thin').columnize({columns:4});
+			$('h1').addClass("dontend");
+			$('.wide').columnize({width:300, lastNeverTallest: true });
+			$('.thin').columnize({width:180});
 		});
 	</script>
 </head>

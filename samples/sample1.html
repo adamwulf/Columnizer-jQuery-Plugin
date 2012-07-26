@@ -6,7 +6,7 @@
 	<meta name="author" content="Adam Wulf, Matt Wilson">
 	<!-- Date: 2008-07-12 -->
 	<style>
-		.column *{ padding: 5px; }
+		.column p, .column h1{ padding: 5px; }
 
 
 		body { font-size: 9pt; }
@@ -14,10 +14,9 @@
 		.wide, .thin { clear:both; }
 	</style>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		$(function(){
-			$('h1').addClass("dontend");
 			$('.wide').columnize({width:400});
 			$('.thin').columnize({width:200});
 		});

@@ -6,19 +6,26 @@
 	<meta name="author" content="Adam Wulf, Matt Wilson">
 	<!-- Date: 2008-07-12 -->
 	<style>
+		.column p, .column h1{ padding: 5px; }
+
+
 		body { font-size: 9pt; }
 		#wrapper { margin: 0px 100px; }
 		.wide, .thin { clear:both; }
 	</style>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../src/jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		$(function(){
 			$('.wide').columnize({
-				columns : 5,
+				width : 500,
 				buildOnce : true,
-				doneFunc : function(){
-					$('.wide .column').width("20%");
+				overflow : {
+					id : ".thin",
+					height : 300,
+					doneFunc : function(){
+						$('.thin').columnize({ width : 300 });
+					}
 				}
 			})
 		});
