@@ -242,8 +242,8 @@
 					split($col, $destroyable, $col, targetHeight);
 				}
 				
-				while(checkDontEndColumn($col.children(":last").length && $col.children(":last").get(0))){
-					var $lastKid = $col.children(":last");
+				while(checkDontEndColumn($col.contents(":last").length && $col.contents(":last").get(0))){
+					var $lastKid = $col.contents(":last");
 					$lastKid.remove();
 					$destroyable.prepend($lastKid);
 				}
@@ -352,8 +352,8 @@
 //						alert("not splitting a dontend");
 					}
 					
-					while(checkDontEndColumn($col.children(":last").length && $col.children(":last").get(0))){
-						var $lastKid = $col.children(":last");
+					while(checkDontEndColumn($col.contents(":last").length && $col.contents(":last").get(0))){
+						var $lastKid = $col.contents(":last");
 						$lastKid.remove();
 						$destroyable.prepend($lastKid);
 					}
