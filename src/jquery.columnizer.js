@@ -105,19 +105,24 @@
 		 * @$pullOutHere, a jQuery element
 		 */
 		function columnize($putInHere, $pullOutHere, $parentColumn, height){
+			//
+			// add as many nodes to the column as we can,
+			// but stop once our height is too tall
 			while($parentColumn.height() < height &&
 				  $pullOutHere[0].childNodes.length){
 				$putInHere.append($pullOutHere[0].childNodes[0]);
 			}
 			if($putInHere[0].childNodes.length == 0) return;
 			
-			// now we're too tall, undo the last one
+			// now we're too tall, so undo the last one
 			var kids = $putInHere[0].childNodes;
 			var lastKid = kids[kids.length-1];
 			$putInHere[0].removeChild(lastKid);
 			var $item = $(lastKid);
 			
-			
+			//
+			// now lets try to split that last node
+			// to fit as much of it as we can into this column
 			if($item[0].nodeType == 3){
 				// it's a text node, split it up
 				var oText = $item[0].nodeValue;
@@ -165,6 +170,8 @@
 		function split($putInHere, $pullOutHere, $parentColumn, height){
 			if($pullOutHere.children().length){
 				$cloneMe = $pullOutHere.children(":first");
+				//
+				// clone the node with all data and events
 				$clone = $cloneMe.clone(true);
 				//
 				// need to support both .prop and .attr if .prop doesn't exist.
@@ -173,18 +180,33 @@
 				   ($clone.attr("nodeType") == 1 && !$clone.hasClass("dontend"))){ 
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < height + 20){
+						//
+						// we can't split an img in half, so just add it
+						// to the column and remove it from the pullOutHere section
 						$cloneMe.remove();
 					}else if(!$cloneMe.hasClass("dontsplit") && $parentColumn.height() < height + 20){
+						//
+						// pretty close fit, and we're not allowed to split it, so just
+						// add it to the column, remove from pullOutHere, and be done
 						$cloneMe.remove();
 					}else if($clone.is("img") || $cloneMe.hasClass("dontsplit")){
+						//
+						// it's either an image that's too tall, or an unsplittable node
+						// that's too tall. leave it in the pullOutHere and we'll add it to the 
+						// next column
 						$clone.remove();
 					}else{
+						//
+						// ok, we're allowed to split the node in half, so empty out
+						// the node in the column we're building, and start splitting
+						// it in half, leaving some of it in pullOutHere
 						$clone.empty();
 						if(!columnize($clone, $cloneMe, $parentColumn, height)){
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, height);
 							}
 						}
+						$cloneMe.addClass("split");
 						if($clone.get(0).childNodes.length == 0){
 							// it was split, but nothing is in it :(
 							$clone.remove();

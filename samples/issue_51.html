@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Columnizer JQuery Plugin sample page</title>
+	<meta name="author" content="Adam Wulf, Matt Wilson">
+	<!-- Date: 2008-07-12 -->
+	<style>
+		.column p, .column h1{ padding: 5px; }
+
+
+		body { font-size: 9pt; }
+		#wrapper { margin: 0px 100px; }
+		.wide, .thin { clear:both; }
+	</style>
+	
+	
+	<!-- jquery 1.4.2 for this bug -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script src="../src/jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+
+<p> This is a test case for <a href="https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues/51">Issue 51</a></p>
+
+<ul class="wide">
+<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse urna urna, interdum non adipiscing eu, consectetur a augue.</li>
+<li>Morbi vehicula nunc in quam placerat at ornare orci suscipit. Sed mauris eros, viverra non sodales quis, fermentum non purus.</li>
+<li>Nullam pulvinar fermentum laoreet. Nullam lobortis velit nec mauris eleifend faucibus.</li>
+<li>Maecenas aliquam velit vel lorem porttitor a rhoncus dolor vulputate. </li>
+<li>Suspendisse potenti.</li>
+<li>Curabitur at turpis sed nunc auctor feugiat sed nec mauris.</li>
+<li>Sed ut nunc erat, non tincidunt nisi.</li>
+<li>Pellentesque placerat magna non lectus porta suscipit.</li>
+</ul>
+</div>
+
+The script is simple.
+
+<script type="text/javascript">
+$(function() {
+$('.wide').columnize({width:290});
+});
+</script>
+</body>
+</html>
