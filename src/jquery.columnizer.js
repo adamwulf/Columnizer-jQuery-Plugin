@@ -202,11 +202,13 @@
 						// it in half, leaving some of it in pullOutHere
 						$clone.empty();
 						if(!columnize($clone, $cloneMe, $parentColumn, height)){
+							$cloneMe.addClass("split");
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, height);
 							}
+						}else{
+							$cloneMe.addClass("split");
 						}
-						$cloneMe.addClass("split");
 						if($clone.get(0).childNodes.length == 0){
 							// it was split, but nothing is in it :(
 							$clone.remove();
