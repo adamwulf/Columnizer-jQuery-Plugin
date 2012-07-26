@@ -202,11 +202,15 @@
 						// it in half, leaving some of it in pullOutHere
 						$clone.empty();
 						if(!columnize($clone, $cloneMe, $parentColumn, height)){
+							// this node still has non-text nodes to split
+							// add the split class and then recur
 							$cloneMe.addClass("split");
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, height);
 							}
 						}else{
+							// this node only has text node children left, add the
+							// split class and move on.
 							$cloneMe.addClass("split");
 						}
 						if($clone.get(0).childNodes.length == 0){
