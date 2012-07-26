@@ -96,20 +96,32 @@
 				}
 			});
 		}
-		
+         
 		/**
-		 * return a node that has a height
-		 * less than or equal to height
+		 * this fuction builds as much of a column as it can without
+		 * splitting nodes in half. If the last node in the new column
+		 * is a text node, then it will try to split that text node. otherwise
+		 * it will leave the node in $pullOutHere and return with a height
+		 * smaller than targetHeight.
+		 * 
+         * Returns a boolean on whether we did some splitting successfully at a text point
+         * (so we know we don't need to split a real element). return false if the caller should
+         * split a node if possible to end this column.
 		 *
-		 * @param putInHere, a dom element
-		 * @$pullOutHere, a jQuery element
+		 * @param putInHere, the jquery node to put elements into for the current column
+		 * @param $pullOutHere, the jquery node to pull elements out of (uncolumnized html)
+		 * @param $parentColumn, the jquery node for the currently column that's being added to
+		 * @param targetHeight, the ideal height for the column, get as close as we can to this height
 		 */
-		function columnize($putInHere, $pullOutHere, $parentColumn, height){
+		function columnize($putInHere, $pullOutHere, $parentColumn, targetHeight){
 			//
 			// add as many nodes to the column as we can,
 			// but stop once our height is too tall
-			while($parentColumn.height() < height &&
+			while($parentColumn.height() < targetHeight &&
 				  $pullOutHere[0].childNodes.length){
+				//
+				// Because we're not cloning, jquery will actually move the element"
+				// http://welcome.totheinter.net/2009/03/19/the-undocumented-life-of-jquerys-append/
 				$putInHere.append($pullOutHere[0].childNodes[0]);
 			}
 			if($putInHere[0].childNodes.length == 0) return;
@@ -131,7 +143,7 @@
 				counter2 = options.accuracy;
 				var columnText;
 				var latestTextNode = null;
-				while($parentColumn.height() < height && oText.length){
+				while($parentColumn.height() < targetHeight && oText.length){
 					if (oText.indexOf(' ', counter2) != '-1') {
 						columnText = oText.substring(0, oText.indexOf(' ', counter2));
 					} else {
@@ -146,7 +158,7 @@
 						oText = "";
 					}
 				}
-				if($parentColumn.height() >= height && latestTextNode != null){
+				if($parentColumn.height() >= targetHeight && latestTextNode != null){
 					// too tall :(
 					$putInHere[0].removeChild(latestTextNode);
 					oText = latestTextNode.nodeValue + oText;
@@ -167,7 +179,11 @@
 			return $item[0].nodeType == 3;
 		}
 		
-		function split($putInHere, $pullOutHere, $parentColumn, height){
+		/**
+		 * Split up an element, which is more complex than splitting text. We need to create 
+		 * two copies of the element with it's contents divided between each
+		 */
+		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
 			if($pullOutHere.children().length){
 				var $cloneMe = $pullOutHere.children(":first");
 				//
@@ -179,12 +195,12 @@
 				if(($clone.prop && $clone.prop("nodeType") == 1 && !$clone.hasClass("dontend")) ||
 				   ($clone.attr("nodeType") == 1 && !$clone.hasClass("dontend"))){ 
 					$putInHere.append($clone);
-					if($clone.is("img") && $parentColumn.height() < height + 20){
+					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
 						// we can't split an img in half, so just add it
 						// to the column and remove it from the pullOutHere section
 						$cloneMe.remove();
-					}else if(!$cloneMe.hasClass("dontsplit") && $parentColumn.height() < height + 20){
+					}else if(!$cloneMe.hasClass("dontsplit") && $parentColumn.height() < targetHeight + 20){
 						//
 						// pretty close fit, and we're not allowed to split it, so just
 						// add it to the column, remove from pullOutHere, and be done
@@ -201,12 +217,12 @@
 						// the node in the column we're building, and start splitting
 						// it in half, leaving some of it in pullOutHere
 						$clone.empty();
-						if(!columnize($clone, $cloneMe, $parentColumn, height)){
+						if(!columnize($clone, $cloneMe, $parentColumn, targetHeight)){
 							// this node still has non-text nodes to split
 							// add the split class and then recur
 							$cloneMe.addClass("split");
 							if($cloneMe.children().length){
-								split($clone, $cloneMe, $parentColumn, height);
+								split($clone, $cloneMe, $parentColumn, targetHeight);
 							}
 						}else{
 							// this node only has text node children left, add the
@@ -318,6 +334,10 @@
 				scrollHorizontally = true;
 			}
 			
+			//
+			// We loop as we try and workout a good height to use. We know it initially as an average 
+			// but if the last column is higher than the first ones (which can happen, depending on split
+			// points) we need to raise 'adjustment'. We try this over a few iterations until we're 'solid'.
 			for(var loopCount=0;loopCount<maxLoops;loopCount++){
 				$inBox.empty();
 				var $destroyable;
