@@ -144,7 +144,8 @@
 				var columnText;
 				var latestTextNode = null;
 				while($parentColumn.height() < targetHeight && oText.length){
-					if (oText.indexOf(' ', counter2) != '-1') {
+					var indexOfSpace = oText.indexOf(' ', counter2);
+					if (indexOfSpace != -1) {
 						columnText = oText.substring(0, oText.indexOf(' ', counter2));
 					} else {
 						columnText = oText;
@@ -152,8 +153,8 @@
 					latestTextNode = document.createTextNode(columnText);
 					$putInHere.append(latestTextNode);
 					
-					if(oText.length > counter2){
-						oText = oText.substring(oText.indexOf(' ', counter2));
+					if(oText.length > counter2 && indexOfSpace != -1){
+						oText = oText.substring(indexOfSpace);
 					}else{
 						oText = "";
 					}
