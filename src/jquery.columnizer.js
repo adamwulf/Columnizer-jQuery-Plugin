@@ -192,8 +192,7 @@
 				//
 				// need to support both .prop and .attr if .prop doesn't exist.
 				// this is for backwards compatibility with older versions of jquery.
-				if(($clone.prop && $clone.prop("nodeType") == 1 && !$clone.hasClass("dontend")) ||
-				   ($clone.attr("nodeType") == 1 && !$clone.hasClass("dontend"))){ 
+				if($clone.get(0).nodeType == 1 && !$clone.hasClass("dontend")){ 
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
