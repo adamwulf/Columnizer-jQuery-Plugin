@@ -185,8 +185,12 @@
 		 * two copies of the element with it's contents divided between each
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
-			if($pullOutHere.children().length){
-				var $cloneMe = $pullOutHere.children(":first");
+			if($pullOutHere.contents().length){
+				var $cloneMe = $pullOutHere.contents(":first");
+				//
+				// make sure we're splitting an element
+				if($cloneMe.get(0).nodeType != 1) return;
+				
 				//
 				// clone the node with all data and events
 				var $clone = $cloneMe.clone(true);
