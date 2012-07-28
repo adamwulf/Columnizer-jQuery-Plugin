@@ -1,4 +1,4 @@
-// version 1.5.0
+// version 1.6.0
 // http://welcome.totheinter.net/columnizer-jquery-plugin/
 // created by: Adam Wulf @adamwulf, adam.wulf@gmail.com
 
@@ -301,7 +301,6 @@
 			if(dom.childNodes.length == 0) return false;
 			return checkDontEndColumn(dom.childNodes[dom.childNodes.length-1]);
 		}
-		
 		function columnizeIt() {
 			//reset adjustment var
 			adjustment = 0;
@@ -384,6 +383,27 @@
 						$destroyable.prepend($lastKid);
 					}
 					i++;
+					
+					//
+					// https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues/47
+					//
+					// check for infinite loop.
+					//
+					// this could happen when a dontsplit item is taller than the column
+					// we're trying to build, and its never actually added to a column.
+					//
+					// this results in empty columns being added with the dontsplit item
+					// perpetually waiting to get put into a column. lets force the issue here
+					if($col.contents().length == 0 && $destroyable.contents().length){
+						//
+						// ok, we're building zero content columns. this'll happen forever
+						// since nothing can ever get taken out of destroyable.
+						//
+						// to fix, lets put 1 item from destroyable into the empty column
+						// before we iterate
+						$col.append($destroyable.contents(":first"));
+					}
+					
 				}
 				if(options.overflow && !scrollHorizontally){
 					var IE6 = false /*@cc_on || @_jscript_version < 5.7 @*/;
