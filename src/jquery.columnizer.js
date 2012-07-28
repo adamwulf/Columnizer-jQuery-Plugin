@@ -126,7 +126,14 @@
 				//
 				// Because we're not cloning, jquery will actually move the element"
 				// http://welcome.totheinter.net/2009/03/19/the-undocumented-life-of-jquerys-append/
-				if($(node).andSelf().find(".columnbreak").length){
+				if($(node).find(".columnbreak").length){
+					//
+					// our column is on a column break, so just end here
+					return;
+				}
+				if($(node).hasClass("columnbreak")){
+					//
+					// our column is on a column break, so just end here
 					return;
 				}
 				$putInHere.append(node);
@@ -192,7 +199,12 @@
 		 * two copies of the element with it's contents divided between each
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
-			if($putInHere.contents(":last").andSelf().find(".columnbreak").length){
+			if($putInHere.contents(":last").find(".columnbreak").length){
+				//
+				// our column is on a column break, so just end here
+				return;
+			}
+			if($putInHere.contents(":last").hasClass("columnbreak")){
 				//
 				// our column is on a column break, so just end here
 				return;
