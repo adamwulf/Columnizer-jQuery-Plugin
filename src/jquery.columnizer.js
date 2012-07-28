@@ -33,7 +33,9 @@
 		// (int) the minimum number of characters to jump when splitting
 		// text nodes. smaller numbers will result in higher accuracy
 		// column widths, but will take slightly longer
-		accuracy : false
+		accuracy : false,
+		// don't automatically layout columns, only use manual columnbreak
+		manualbreaks : false
 	};
 	var options = $.extend(defaults, options);
 	
@@ -50,6 +52,7 @@
 		var $cache = $('<div></div>'); // this is where we'll put the real content
 		var lastWidth = 0;
 		var columnizing = false;
+		var manualbreaks = options.manualbreaks;
 		
 		var adjustment = 0;
 		
@@ -117,12 +120,16 @@
 			//
 			// add as many nodes to the column as we can,
 			// but stop once our height is too tall
-			while($parentColumn.height() < targetHeight &&
+			while((manualbreaks || $parentColumn.height() < targetHeight) &&
 				  $pullOutHere[0].childNodes.length){
+				var node = $pullOutHere[0].childNodes[0]
 				//
 				// Because we're not cloning, jquery will actually move the element"
 				// http://welcome.totheinter.net/2009/03/19/the-undocumented-life-of-jquerys-append/
-				$putInHere.append($pullOutHere[0].childNodes[0]);
+				if($(node).andSelf().find(".columnbreak").length){
+					return;
+				}
+				$putInHere.append(node);
 			}
 			if($putInHere[0].childNodes.length == 0) return;
 			
@@ -185,6 +192,11 @@
 		 * two copies of the element with it's contents divided between each
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
+			if($putInHere.contents(":last").andSelf().find(".columnbreak").length){
+				//
+				// our column is on a column break, so just end here
+				return;
+			}
 			if($pullOutHere.contents().length){
 				var $cloneMe = $pullOutHere.contents(":first");
 				//
@@ -197,7 +209,17 @@
 				//
 				// need to support both .prop and .attr if .prop doesn't exist.
 				// this is for backwards compatibility with older versions of jquery.
-				if($clone.get(0).nodeType == 1 && !$clone.hasClass("dontend")){ 
+				if($cloneMe.hasClass("columnbreak")){
+					//
+					// ok, we have a columnbreak, so add it into
+					// the column and exit
+					$putInHere.append($clone);
+					$cloneMe.remove();
+				}else if (manualbreaks){
+					// keep adding until we hit a manual break
+					$putInHere.append($clone);
+					$cloneMe.remove();
+				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass("dontend")){ 
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
@@ -309,6 +331,9 @@
 			
 			var numCols = Math.round($inBox.width() / options.width);
 			if(options.columns) numCols = options.columns;
+			if(manualbreaks){
+				numCols = $cache.find(".columnbreak").length + 1;
+			}
 //			if ($inBox.data("columnized") && numCols == $inBox.children().length) {
 //				return;
 //			}
@@ -437,19 +462,30 @@
 					var min = 10000000;
 					var max = 0;
 					var lastIsMax = false;
+					var numberOfColumnsThatDontEndInAColumnBreak = 0;
 					$inBox.children().each(function($inBox){ return function($item){
-						var h = $inBox.children().eq($item).height();
-						lastIsMax = false;
-						totalH += h;
-						if(h > max) {
-							max = h;
-							lastIsMax = true;
+						var $col = $inBox.children().eq($item);
+						var endsInBreak = $col.children(":last").find(".columnbreak").length;
+						if(!endsInBreak){
+							var h = $col.height();
+							lastIsMax = false;
+							totalH += h;
+							if(h > max) {
+								max = h;
+								lastIsMax = true;
+							}
+							if(h < min) min = h;
+							numberOfColumnsThatDontEndInAColumnBreak++;
 						}
-						if(h < min) min = h;
 					}}($inBox));
 
-					var avgH = totalH / numCols;
-					if(options.lastNeverTallest && lastIsMax){
+					var avgH = totalH / numberOfColumnsThatDontEndInAColumnBreak;
+					if(totalH == 0){
+						//
+						// all columns end in a column break,
+						// so we're done here
+						loopCount = maxLoops;
+					}else if(options.lastNeverTallest && lastIsMax){
 						// the last column is the tallest
 						// so allow columns to be taller
 						// and retry
