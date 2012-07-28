@@ -389,7 +389,7 @@
 					//
 					// check for infinite loop.
 					//
-					// this could happen when a dontsplit item is taller than the column
+					// this could happen when a dontsplit or dontend item is taller than the column
 					// we're trying to build, and its never actually added to a column.
 					//
 					// this results in empty columns being added with the dontsplit item
