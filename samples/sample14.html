@@ -27,7 +27,10 @@
 		$(function(){
 			$('#hidden-wrapper a').click(function(){ alert("boo!"); });
 			$('#hidden-wrapper').columnize({
-				manualbreaks:true, 
+				width:1,
+				height:1,
+				columns:1000,
+				manualBreaks:true, 
 				target: "#target"
 				
 			});
