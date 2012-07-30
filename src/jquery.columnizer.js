@@ -364,8 +364,8 @@
 			if(manualBreaks){
 				numCols = $cache.find(".columnbreak").length + 1;
 				optionWidth = false;
-				
 			}
+			
 //			if ($inBox.data("columnized") && numCols == $inBox.children().length) {
 //				return;
 //			}
@@ -459,6 +459,16 @@
 						// to fix, lets put 1 item from destroyable into the empty column
 						// before we iterate
 						$col.append($destroyable.contents(":first"));
+					}else if(i == numCols - (options.overflow ? 0 : 1) && !options.overflow){
+						//
+						// ok, we're about to exit the while loop because we're done with all
+						// columns except the last column.
+						//
+						// if $destroyable still has columnbreak nodes in it, then we need to keep
+						// looping and creating more columns.
+						if($destroyable.find(".columnbreak").length){
+							numCols ++;
+						}
 					}
 					
 				}
