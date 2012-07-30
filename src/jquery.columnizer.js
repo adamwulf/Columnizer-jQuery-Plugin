@@ -185,7 +185,7 @@
 				}
 			}
 			
-			if($pullOutHere.children().length){
+			if($pullOutHere.contents().length){
 				$pullOutHere.prepend($item);
 			}else{
 				$pullOutHere.append($item);
