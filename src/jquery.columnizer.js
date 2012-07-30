@@ -329,12 +329,28 @@
 			
 		}
 		
+		/**
+		 * returns true if the input dom node
+		 * should not end a column.
+		 * returns false otherwise
+		 */
 		function checkDontEndColumn(dom){
+			if(dom.nodeType == 3){
+				// text node. ensure that the text
+				// is not 100% whitespace
+				if(/^\s+$/.test(dom.nodeValue)){
+					return true;
+				}
+				return false;
+			}
 			if(dom.nodeType != 1) return false;
 			if($(dom).hasClass("dontend")) return true;
 			if(dom.childNodes.length == 0) return false;
 			return checkDontEndColumn(dom.childNodes[dom.childNodes.length-1]);
 		}
+		
+		
+		
 		function columnizeIt() {
 			//reset adjustment var
 			adjustment = 0;
