@@ -35,7 +35,10 @@
 		// column widths, but will take slightly longer
 		accuracy : false,
 		// don't automatically layout columns, only use manual columnbreak
-		manualBreaks : false
+		manualBreaks : false,
+		// previx for all the CSS classes used by this plugin
+		// default to empty string for backwards compatibility
+		cssClassPrefix : ""
 	};
 	var options = $.extend(defaults, options);
 	
@@ -53,6 +56,11 @@
 		var lastWidth = 0;
 		var columnizing = false;
 		var manualBreaks = options.manualBreaks;
+		var cssClassPrefix = defaults.cssClassPrefix;
+		if(typeof(options.cssClassPrefix) == "string"){
+			cssClassPrefix = options.cssClassPrefix;
+		}
+
 		
 		var adjustment = 0;
 		
@@ -99,6 +107,15 @@
 				}
 			});
 		}
+		
+		function prefixTheClassName(className, withDot){
+			var dot = withDot ? "." : "";
+			if(cssClassPrefix.length){
+				return dot + cssClassPrefix + "-" + className;
+			}
+			return dot + className;
+		}
+		
          
 		/**
 		 * this fuction builds as much of a column as it can without
@@ -126,12 +143,12 @@
 				//
 				// Because we're not cloning, jquery will actually move the element"
 				// http://welcome.totheinter.net/2009/03/19/the-undocumented-life-of-jquerys-append/
-				if($(node).find(".columnbreak").length){
+				if($(node).find(prefixTheClassName("columnbreak", true)).length){
 					//
 					// our column is on a column break, so just end here
 					return;
 				}
-				if($(node).hasClass("columnbreak")){
+				if($(node).hasClass(prefixTheClassName("columnbreak"))){
 					//
 					// our column is on a column break, so just end here
 					return;
@@ -199,12 +216,12 @@
 		 * two copies of the element with it's contents divided between each
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
-			if($putInHere.contents(":last").find(".columnbreak").length){
+			if($putInHere.contents(":last").find(prefixTheClassName("columnbreak", true)).length){
 				//
 				// our column is on a column break, so just end here
 				return;
 			}
-			if($putInHere.contents(":last").hasClass("columnbreak")){
+			if($putInHere.contents(":last").hasClass(prefixTheClassName("columnbreak"))){
 				//
 				// our column is on a column break, so just end here
 				return;
@@ -221,7 +238,7 @@
 				//
 				// need to support both .prop and .attr if .prop doesn't exist.
 				// this is for backwards compatibility with older versions of jquery.
-				if($cloneMe.hasClass("columnbreak")){
+				if($cloneMe.hasClass(prefixTheClassName("columnbreak"))){
 					//
 					// ok, we have a columnbreak, so add it into
 					// the column and exit
@@ -231,19 +248,19 @@
 					// keep adding until we hit a manual break
 					$putInHere.append($clone);
 					$cloneMe.remove();
-				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass("dontend")){ 
+				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass(prefixTheClassName("dontend"))){ 
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
 						// we can't split an img in half, so just add it
 						// to the column and remove it from the pullOutHere section
 						$cloneMe.remove();
-					}else if(!$cloneMe.hasClass("dontsplit") && $parentColumn.height() < targetHeight + 20){
+					}else if(!$cloneMe.hasClass(prefixTheClassName("dontsplit")) && $parentColumn.height() < targetHeight + 20){
 						//
 						// pretty close fit, and we're not allowed to split it, so just
 						// add it to the column, remove from pullOutHere, and be done
 						$cloneMe.remove();
-					}else if($clone.is("img") || $cloneMe.hasClass("dontsplit")){
+					}else if($clone.is("img") || $cloneMe.hasClass(prefixTheClassName("dontsplit"))){
 						//
 						// it's either an image that's too tall, or an unsplittable node
 						// that's too tall. leave it in the pullOutHere and we'll add it to the 
@@ -258,14 +275,14 @@
 						if(!columnize($clone, $cloneMe, $parentColumn, targetHeight)){
 							// this node still has non-text nodes to split
 							// add the split class and then recur
-							$cloneMe.addClass("split");
+							$cloneMe.addClass(prefixTheClassName("split"));
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, targetHeight);
 							}
 						}else{
 							// this node only has text node children left, add the
 							// split class and move on.
-							$cloneMe.addClass("split");
+							$cloneMe.addClass(prefixTheClassName("split"));
 						}
 						if($clone.get(0).childNodes.length == 0){
 							// it was split, but nothing is in it :(
@@ -285,14 +302,18 @@
 			$inBox.data("columnizing", true);
 			
 			$inBox.empty();
-			$inBox.append($("<div class='first last column' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
+			$inBox.append($("<div class='"
+			 + prefixTheClassName("first") + " "
+			 + prefixTheClassName("last") + " "
+			 + prefixTheClassName("column") + " "
+			 + "' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children().eq($inBox.children().length-1);
 			$destroyable = $cache.clone(true);
 			if(options.overflow){
 				targetHeight = options.overflow.height;
 				columnize($col, $destroyable, $col, targetHeight);
 				// make sure that the last item in the column isn't a "dontend"
-				if(!$destroyable.contents().find(":first-child").hasClass("dontend")){
+				if(!$destroyable.contents().find(":first-child").hasClass(prefixTheClassName("dontend"))){
 					split($col, $destroyable, $col, targetHeight);
 				}
 				
@@ -351,7 +372,7 @@
 				return false;
 			}
 			if(dom.nodeType != 1) return false;
-			if($(dom).hasClass("dontend")) return true;
+			if($(dom).hasClass(prefixTheClassName("dontend"))) return true;
 			if(dom.childNodes.length == 0) return false;
 			return checkDontEndColumn(dom.childNodes[dom.childNodes.length-1]);
 		}
@@ -369,7 +390,7 @@
 			var optionHeight = options.height;
 			if(options.columns) numCols = options.columns;
 			if(manualBreaks){
-				numCols = $cache.find(".columnbreak").length + 1;
+				numCols = $cache.find(prefixTheClassName("columnbreak", true)).length + 1;
 				optionWidth = false;
 			}
 			
@@ -420,8 +441,9 @@
 				// create the columns
 				for (var i = 0; i < numCols; i++) {
 					/* create column */
-					var className = (i == 0) ? "first column" : "column";
-					var className = (i == numCols - 1) ? ("last " + className) : className;
+					var className = (i == 0) ? prefixTheClassName("first") : "";
+					className += " " + prefixTheClassName("column");
+					var className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
 				
@@ -435,7 +457,7 @@
 					var $col = $inBox.children().eq(i);
 					columnize($col, $destroyable, $col, targetHeight);
 					// make sure that the last item in the column isn't a "dontend"
-					if(!$destroyable.contents().find(":first-child").hasClass("dontend")){
+					if(!$destroyable.contents().find(":first-child").hasClass(prefixTheClassName("dontend"))){
 						split($col, $destroyable, $col, targetHeight);
 					}else{
 //						alert("not splitting a dontend");
@@ -473,7 +495,7 @@
 						//
 						// if $destroyable still has columnbreak nodes in it, then we need to keep
 						// looping and creating more columns.
-						if($destroyable.find(".columnbreak").length){
+						if($destroyable.find(prefixTheClassName("columnbreak", true)).length){
 							numCols ++;
 						}
 					}
@@ -514,7 +536,7 @@
 					var numberOfColumnsThatDontEndInAColumnBreak = 0;
 					$inBox.children().each(function($inBox){ return function($item){
 						var $col = $inBox.children().eq($item);
-						var endsInBreak = $col.children(":last").find(".columnbreak").length;
+						var endsInBreak = $col.children(":last").find(prefixTheClassName("columnbreak", true)).length;
 						if(!endsInBreak){
 							var h = $col.height();
 							lastIsMax = false;
@@ -561,20 +583,20 @@
 						$col = $inBox.children().eq(i);
 						$col.width(optionWidth + "px");
 						if(i==0){
-							$col.addClass("first");
+							$col.addClass(prefixTheClassName("first"));
 						}else if(i==$inBox.children().length-1){
-							$col.addClass("last");
+							$col.addClass(prefixTheClassName("last"));
 						}else{
-							$col.removeClass("first");
-							$col.removeClass("last");
+							$col.removeClass(prefixTheClassName("first"));
+							$col.removeClass(prefixTheClassName("last"));
 						}
 					});
 					$inBox.width($inBox.children().length * optionWidth + "px");
 				}
 				$inBox.append($("<br style='clear:both;'>"));
 			}
-			$inBox.find('.column').find(':first.removeiffirst').remove();
-			$inBox.find('.column').find(':last.removeiflast').remove();
+			$inBox.find(prefixTheClassName("column", true)).find(":first" + prefixTheClassName("removeiffirst", true)).remove();
+			$inBox.find(prefixTheClassName("column", true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
 			$inBox.data("columnizing", false);
 
 			if(options.overflow){
