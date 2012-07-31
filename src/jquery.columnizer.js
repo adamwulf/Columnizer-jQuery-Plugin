@@ -296,7 +296,7 @@
 					split($col, $destroyable, $col, targetHeight);
 				}
 				
-				while(checkDontEndColumn($col.contents(":last").length && $col.contents(":last").get(0))){
+				while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 					var $lastKid = $col.contents(":last");
 					$lastKid.remove();
 					$destroyable.prepend($lastKid);
@@ -306,9 +306,11 @@
 				var div = document.createElement('DIV');
 				while($destroyable[0].childNodes.length > 0){
 					var kid = $destroyable[0].childNodes[0];
-					for(var i=0;i<kid.attributes.length;i++){
-						if(kid.attributes[i].nodeName.indexOf("jQuery") == 0){
-							kid.removeAttribute(kid.attributes[i].nodeName);
+					if(kid.attributes){
+						for(var i=0;i<kid.attributes.length;i++){
+							if(kid.attributes[i].nodeName.indexOf("jQuery") == 0){
+								kid.removeAttribute(kid.attributes[i].nodeName);
+							}
 						}
 					}
 					div.innerHTML = "";
@@ -339,7 +341,12 @@
 				// text node. ensure that the text
 				// is not 100% whitespace
 				if(/^\s+$/.test(dom.nodeValue)){
-					return true;
+						//
+				        // ok, it's 100% whitespace,
+				        // so we should return checkDontEndColumn
+				        // of the inputs previousSibling
+				        if(!dom.previousSibling) return false;
+					return checkDontEndColumn(dom.previousSibling);
 				}
 				return false;
 			}
@@ -434,7 +441,7 @@
 //						alert("not splitting a dontend");
 					}
 					
-					while(checkDontEndColumn($col.contents(":last").length && $col.contents(":last").get(0))){
+					while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 						var $lastKid = $col.contents(":last");
 						$lastKid.remove();
 						$destroyable.prepend($lastKid);
