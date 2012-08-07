@@ -346,7 +346,7 @@
 			}
 			$inBox.data("columnizing", false);
 			
-			if(options.overflow){
+			if(options.overflow && options.overflow.doneFunc){
 				options.overflow.doneFunc();
 			}
 			
