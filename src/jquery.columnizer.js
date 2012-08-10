@@ -564,13 +564,14 @@
 						// the last column is the tallest
 						// so allow columns to be taller
 						// and retry
+						//
+						// hopefully this'll mean more content fits into
+						// earlier columns, so that the last column
+						// can be shorter than the rest
 						adjustment += 30;
-//						if(adjustment < 100){
-							targetHeight = targetHeight + 30;
-							if(loopCount == maxLoops-1) maxLoops++;
-//						}else{
-//							loopCount = maxLoops;
-//						}
+
+						targetHeight = targetHeight + 30;
+						if(loopCount == maxLoops-1) maxLoops++;
 					}else if(max - min > 30){
 						// too much variation, try again
 						targetHeight = avgH + 30;
