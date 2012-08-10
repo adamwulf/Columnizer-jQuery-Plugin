@@ -428,7 +428,11 @@
 			// We loop as we try and workout a good height to use. We know it initially as an average 
 			// but if the last column is higher than the first ones (which can happen, depending on split
 			// points) we need to raise 'adjustment'. We try this over a few iterations until we're 'solid'.
-			for(var loopCount=0;loopCount<maxLoops;loopCount++){
+			//
+			// also, lets hard code the max loops to 20. that's /a lot/ of loops for columnizer,
+			// and should keep run aways in check. if somehow someone has content combined with
+			// options that would cause an infinite loop, then this'll definitely stop it.
+			for(var loopCount=0;loopCount<maxLoops && maxLoops < 20;loopCount++){
 				$inBox.empty();
 				var $destroyable;
 				try{
@@ -561,12 +565,12 @@
 						// so allow columns to be taller
 						// and retry
 						adjustment += 30;
-						if(adjustment < 100){
+//						if(adjustment < 100){
 							targetHeight = targetHeight + 30;
 							if(loopCount == maxLoops-1) maxLoops++;
-						}else{
-							loopCount = maxLoops;
-						}
+//						}else{
+//							loopCount = maxLoops;
+//						}
 					}else if(max - min > 30){
 						// too much variation, try again
 						targetHeight = avgH + 30;
