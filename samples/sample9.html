@@ -15,7 +15,7 @@
 .page .header hr, .page .footer hr{ width: 400px; }
 .page .footer{ text-align: center; }
 .page .footer span{ position: absolute; bottom: 10px; right: 10px; }
-#page_template{ display: none; }
+.page_template{ display: none; }
 
 .enclosure {border:1px dashed black}	  
 </style>
@@ -30,7 +30,7 @@
 				if($('#newsletterContent').contents().length > 0){
 					// when we need to add a new page, use a jq object for a template
 					// or use a long HTML string, whatever your preference
-					$page = $("#page_template").clone().addClass("page").css("display", "block");
+					$page = $(".page_template:first").clone().addClass("page").css("display", "block");
 					
 					// fun stuff, like adding page numbers to the footer
 					$page.find(".footer span").append(page);
@@ -58,7 +58,7 @@
 
 <body>
 The goal of this demo is to show how to columnize super long content over multiple mulit-column "pages".
-<div id="page_template">  
+<div class="page_template">  
 	<div class='header'>This is a header<hr></div>  
 	<div class='content'></div>  
 	<div class='footer'><hr><span>Page: </span>This is the footer.</div>  
