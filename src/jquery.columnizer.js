@@ -461,11 +461,7 @@
 					var $col = $inBox.children().eq(i);
 					columnize($col, $destroyable, $col, targetHeight);
 					// make sure that the last item in the column isn't a "dontend"
-					if(!$destroyable.contents().find(":first-child").hasClass(prefixTheClassName("dontend"))){
-						split($col, $destroyable, $col, targetHeight);
-					}else{
-//						alert("not splitting a dontend");
-					}
+					split($col, $destroyable, $col, targetHeight);
 					
 					while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 						var $lastKid = $col.contents(":last");
