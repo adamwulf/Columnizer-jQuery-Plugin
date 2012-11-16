@@ -132,10 +132,5 @@ Make sure that your content "has display". If the content you're columnizing has
 ### Minimize
 To compress into a zip file, run compress.sh
 
-
-### Questions?
-Check out the [Wiki](https://github.com/adamwulf/Columnizer-jQuery-Plugin/wiki)
-
-
 ### Bug report?
 Check the issues on the [GitHub page](https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues)
