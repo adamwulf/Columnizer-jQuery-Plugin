@@ -600,7 +600,7 @@
 			$inBox.find(prefixTheClassName("column", true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
 			$inBox.data("columnizing", false);
 
-			if(options.overflow){
+			if(options.overflow && options.overflow.doneFunc){
 				options.overflow.doneFunc();
 			}
 			options.doneFunc();
