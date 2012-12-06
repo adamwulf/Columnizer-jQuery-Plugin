@@ -10,6 +10,8 @@
 	var defaults = {
 		// default width of columns
 		width: 400,
+        	//This sets targetHeight to the parents height if it is true
+        	useParentHeight:false,
 		// optional # of columns instead of width
 		columns : false,
 		// true to build columns once regardless of window resize
@@ -422,7 +424,9 @@
 				maxLoops = 1;
 				targetHeight = optionHeight;
 				scrollHorizontally = true;
-			}
+			} else if(options.useParentHeight) {
+		                targetHeight = maxHeight;
+		        }
 			
 			//
 			// We loop as we try and workout a good height to use. We know it initially as an average 
