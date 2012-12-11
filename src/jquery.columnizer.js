@@ -459,6 +459,9 @@
 						$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 					}
 					var $col = $inBox.children().eq(i);
+					if(scrollHorizontally){
+						$col.width(optionWidth + "px");
+					}
 					columnize($col, $destroyable, $col, targetHeight);
 					// make sure that the last item in the column isn't a "dontend"
 					split($col, $destroyable, $col, targetHeight);
