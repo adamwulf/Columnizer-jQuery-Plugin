@@ -20,7 +20,7 @@
 		overflow : false,
 		// this function is called after content is columnized
 		doneFunc : function(){},
-		// if the content should be columnized into a 
+		// if the content should be columnized into a
 		// container node other than it's own node
 		target : false,
 		// re-columnizing when images reload might make things
@@ -38,10 +38,13 @@
 		manualBreaks : false,
 		// previx for all the CSS classes used by this plugin
 		// default to empty string for backwards compatibility
-		cssClassPrefix : ""
+		cssClassPrefix : "",
+		// pass in ({destroy: true}) to run a destroy function on the plugin
+		destroy : false
+
 	};
 	var options = $.extend(defaults, options);
-	
+
 	if(typeof(options.width) == "string"){
 		options.width = parseInt(options.width);
 		if(isNaN(options.width)){
@@ -51,21 +54,53 @@
 
     return this.each(function() {
 	    var $inBox = options.target ? $(options.target) : $(this);
-		var maxHeight = $(this).height();
-		var $cache = $('<div></div>'); // this is where we'll put the real content
-		var lastWidth = 0;
-		var columnizing = false;
-		var manualBreaks = options.manualBreaks;
-		var cssClassPrefix = defaults.cssClassPrefix;
+			var maxHeight = $(this).height();
+			var $cache = $('<div></div>'); // this is where we'll put the real content
+			var lastWidth = 0;
+			var columnizing = false;
+			var manualBreaks = options.manualBreaks;
+			var cssClassPrefix = defaults.cssClassPrefix;
+
 		if(typeof(options.cssClassPrefix) == "string"){
 			cssClassPrefix = options.cssClassPrefix;
 		}
 
-		
+		// set columnSelector as data object on the element for destroy method
+		if ( !$inBox.data('columnizePrefix') )  {
+			$inBox.data('columnizePrefix', cssClassPrefix );
+		} else if ( $inBox.data('columnizePrefix') ) {
+			cssClassPrefix = $inBox.data('columnizePrefix');
+		}
+
+		if (options.destroy) {
+			// only run destroy method if columnizer has been applied to the current element
+			if ( $inBox.data('columnized') ) {
+
+				// remove classes that might have been added - array incase we need to add some classes
+				var classList = ["split"];
+				for (var i = 0; i < classList.length; i++) {
+					$inBox.find( prefixTheClassName(classList[i],true) ).removeClass( prefixTheClassName(classList[i],false) );
+				};
+
+				// remove columns around content
+				$inBox.find(prefixTheClassName("column",true)).each(function(){
+					this.parentNode  &&  $(this.childNodes).insertBefore(this);
+				}).remove();
+
+				// remove br tag that is added at the end of the container
+				$inBox.find('br:last').remove();
+
+				// remove data elements and resize event
+				$inBox.removeData();
+			}
+
+		} else {
+		// run columnizer
+
 		var adjustment = 0;
-		
+
 		$cache.append($(this).contents().clone(true));
-	    
+
 	    // images loading after dom load
 	    // can screw up the column heights,
 	    // so recolumnize after images load
@@ -88,26 +123,31 @@
 		    	}
 	    	}
 	    }
-	    
-		$inBox.empty();
-		
-		columnizeIt();
-		
-		if(!options.buildOnce){
-			$(window).resize(function() {
-				if(!options.buildOnce && $.browser.msie){
-					if($inBox.data("timeout")){
-						clearTimeout($inBox.data("timeout"));
-					}
-					$inBox.data("timeout", setTimeout(columnizeIt, 200));
-				}else if(!options.buildOnce){
-					columnizeIt();
-				}else{
-					// don't rebuild
-				}
-			});
+
+			$inBox.empty();
+
+			columnizeIt();
+
+			if(!options.buildOnce){
+				// add the resize event as a data object so it can be removed later on
+				$inBox.data('columnizeResizeEvent',function () {
+
+					$(window).resize(function() {
+						if(!options.buildOnce && $.browser.msie){
+							if($inBox.data("timeout")){
+								clearTimeout($inBox.data("timeout"));
+							}
+							$inBox.data("timeout", setTimeout(columnizeIt, 200));
+						}else if(!options.buildOnce){
+							columnizeIt();
+						}else{
+							// don't rebuild
+						}
+					});
+				});
+			}
 		}
-		
+
 		function prefixTheClassName(className, withDot){
 			var dot = withDot ? "." : "";
 			if(cssClassPrefix.length){
@@ -115,15 +155,15 @@
 			}
 			return dot + className;
 		}
-		
-         
+
+
 		/**
 		 * this fuction builds as much of a column as it can without
 		 * splitting nodes in half. If the last node in the new column
 		 * is a text node, then it will try to split that text node. otherwise
 		 * it will leave the node in $pullOutHere and return with a height
 		 * smaller than targetHeight.
-		 * 
+		 *
          * Returns a boolean on whether we did some splitting successfully at a text point
          * (so we know we don't need to split a real element). return false if the caller should
          * split a node if possible to end this column.
@@ -156,13 +196,13 @@
 				$putInHere.append(node);
 			}
 			if($putInHere[0].childNodes.length == 0) return;
-			
+
 			// now we're too tall, so undo the last one
 			var kids = $putInHere[0].childNodes;
 			var lastKid = kids[kids.length-1];
 			$putInHere[0].removeChild(lastKid);
 			var $item = $(lastKid);
-			
+
 			//
 			// now lets try to split that last node
 			// to fit as much of it as we can into this column
@@ -183,7 +223,7 @@
 					}
 					latestTextNode = document.createTextNode(columnText);
 					$putInHere.append(latestTextNode);
-					
+
 					if(oText.length > counter2 && indexOfSpace != -1){
 						oText = oText.substring(indexOfSpace);
 					}else{
@@ -201,18 +241,18 @@
 					return false; // we ate the whole text node, move on to the next node
 				}
 			}
-			
+
 			if($pullOutHere.contents().length){
 				$pullOutHere.prepend($item);
 			}else{
 				$pullOutHere.append($item);
 			}
-			
+
 			return $item[0].nodeType == 3;
 		}
-		
+
 		/**
-		 * Split up an element, which is more complex than splitting text. We need to create 
+		 * Split up an element, which is more complex than splitting text. We need to create
 		 * two copies of the element with it's contents divided between each
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
@@ -231,7 +271,7 @@
 				//
 				// make sure we're splitting an element
 				if($cloneMe.get(0).nodeType != 1) return;
-				
+
 				//
 				// clone the node with all data and events
 				var $clone = $cloneMe.clone(true);
@@ -248,7 +288,7 @@
 					// keep adding until we hit a manual break
 					$putInHere.append($clone);
 					$cloneMe.remove();
-				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass(prefixTheClassName("dontend"))){ 
+				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass(prefixTheClassName("dontend"))){
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
@@ -263,7 +303,7 @@
 					}else if($clone.is("img") || $cloneMe.hasClass(prefixTheClassName("dontsplit"))){
 						//
 						// it's either an image that's too tall, or an unsplittable node
-						// that's too tall. leave it in the pullOutHere and we'll add it to the 
+						// that's too tall. leave it in the pullOutHere and we'll add it to the
 						// next column
 						$clone.remove();
 					}else{
@@ -292,15 +332,15 @@
 				}
 			}
 		}
-		
-		
+
+
 		function singleColumnizeIt() {
 			if ($inBox.data("columnized") && $inBox.children().length == 1) {
 				return;
 			}
 			$inBox.data("columnized", true);
 			$inBox.data("columnizing", true);
-			
+
 			$inBox.empty();
 			$inBox.append($("<div class='"
 			 + prefixTheClassName("first") + " "
@@ -316,7 +356,7 @@
 				if(!$destroyable.contents().find(":first-child").hasClass(prefixTheClassName("dontend"))){
 					split($col, $destroyable, $col, targetHeight);
 				}
-				
+
 				while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 					var $lastKid = $col.contents(":last");
 					$lastKid.remove();
@@ -345,13 +385,13 @@
 				$col.append($destroyable);
 			}
 			$inBox.data("columnizing", false);
-			
+
 			if(options.overflow && options.overflow.doneFunc){
 				options.overflow.doneFunc();
 			}
-			
+
 		}
-		
+
 		/**
 		 * returns true if the input dom node
 		 * should not end a column.
@@ -376,15 +416,15 @@
 			if(dom.childNodes.length == 0) return false;
 			return checkDontEndColumn(dom.childNodes[dom.childNodes.length-1]);
 		}
-		
-		
-		
+
+
+
 		function columnizeIt() {
 			//reset adjustment var
 			adjustment = 0;
 			if(lastWidth == $inBox.width()) return;
 			lastWidth = $inBox.width();
-			
+
 			var numCols = Math.round($inBox.width() / options.width);
 			var optionWidth = options.width;
 			var optionHeight = options.height;
@@ -393,7 +433,7 @@
 				numCols = $cache.find(prefixTheClassName("columnbreak", true)).length + 1;
 				optionWidth = false;
 			}
-			
+
 //			if ($inBox.data("columnized") && numCols == $inBox.children().length) {
 //				return;
 //			}
@@ -403,14 +443,14 @@
 			if($inBox.data("columnizing")) return;
 			$inBox.data("columnized", true);
 			$inBox.data("columnizing", true);
-			
+
 			$inBox.empty();
 			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children(":last");
 			$col.append($cache.clone());
 			maxHeight = $col.height();
 			$inBox.empty();
-			
+
 			var targetHeight = maxHeight / numCols;
 			var firstTime = true;
 			var maxLoops = 3;
@@ -423,9 +463,9 @@
 				targetHeight = optionHeight;
 				scrollHorizontally = true;
 			}
-			
+
 			//
-			// We loop as we try and workout a good height to use. We know it initially as an average 
+			// We loop as we try and workout a good height to use. We know it initially as an average
 			// but if the last column is higher than the first ones (which can happen, depending on split
 			// points) we need to raise 'adjustment'. We try this over a few iterations until we're 'solid'.
 			//
@@ -450,7 +490,7 @@
 					var className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
-				
+
 				// fill all but the last column (unless overflowing)
 				var i = 0;
 				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.contents().length){
@@ -465,14 +505,14 @@
 					columnize($col, $destroyable, $col, targetHeight);
 					// make sure that the last item in the column isn't a "dontend"
 					split($col, $destroyable, $col, targetHeight);
-					
+
 					while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 						var $lastKid = $col.contents(":last");
 						$lastKid.remove();
 						$destroyable.prepend($lastKid);
 					}
 					i++;
-					
+
 					//
 					// https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues/47
 					//
@@ -502,7 +542,7 @@
 							numCols ++;
 						}
 					}
-					
+
 				}
 				if(options.overflow && !scrollHorizontally){
 					var IE6 = false /*@cc_on || @_jscript_version < 5.7 @*/;
