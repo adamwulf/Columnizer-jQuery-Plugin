@@ -60,21 +60,32 @@
 			var columnizing = false;
 			var manualBreaks = options.manualBreaks;
 			var cssClassPrefix = defaults.cssClassPrefix;
+			var cuuid = uuid();
 
 		if(typeof(options.cssClassPrefix) == "string"){
 			cssClassPrefix = options.cssClassPrefix;
 		}
 
-		// set columnSelector as data object on the element for destroy method
+		// set columnSelector as data object on the element for destroy method if not set,
+		// else we need to grab it from the data
 		if ( !$inBox.data('columnizePrefix') )  {
 			$inBox.data('columnizePrefix', cssClassPrefix );
 		} else if ( $inBox.data('columnizePrefix') ) {
 			cssClassPrefix = $inBox.data('columnizePrefix');
 		}
 
+		// we need to set a UUID for each instance of the plugin so we can unbind the resize event when we destroy the instance
+		if ( !$inBox.data('columnizeUUID') ) {
+			$inBox.data('columnizeUUID', cuuid);
+		}
+
+
 		if (options.destroy) {
 			// only run destroy method if columnizer has been applied to the current element
 			if ( $inBox.data('columnized') ) {
+
+				// unbind resize event for this instance
+				$(window).unbind('resize.columnize'+ $inBox.data('columnizeUUID') +'');
 
 				// remove classes that might have been added - array incase we need to add some classes
 				var classList = ["split"];
@@ -129,10 +140,8 @@
 			columnizeIt();
 
 			if(!options.buildOnce){
-				// add the resize event as a data object so it can be removed later on
-				$inBox.data('columnizeResizeEvent',function () {
 
-					$(window).resize(function() {
+					$(window).bind('resize.columnize'+ cuuid +'', function() {
 						if(!options.buildOnce && $.browser.msie){
 							if($inBox.data("timeout")){
 								clearTimeout($inBox.data("timeout"));
@@ -144,8 +153,15 @@
 							// don't rebuild
 						}
 					});
-				});
 			}
+		}
+
+
+		function uuid() {
+			var s4 = function () {
+				return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+			}
+			return (s4()+s4()+"-"+s4()+"-"+s4()+"-"+s4()+"-"+s4()+s4()+s4());
 		}
 
 		function prefixTheClassName(className, withDot){
