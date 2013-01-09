@@ -67,6 +67,11 @@ Columnizer will add CSS classes to the columns it creates. Each column will have
 <td style="text-align: right; padding-right: 10px;"><em>manualBreaks</em></td>
 <td style="padding-left: 10px;">Defaults to false. Set to true if you only want to create columns with manual column breaks. If true, then width, height, columns options are ignored.</td>
 </tr>
+
+<tr>
+<td style="text-align: right; padding-right: 10px;"><em>destroy</em></td>
+<td style="padding-left: 10px;">Defaults to false. Set to true if you want to destroy the columnizer on some element.</td>
+</tr>
 </tbody>
 </table>
 
