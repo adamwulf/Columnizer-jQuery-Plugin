@@ -278,8 +278,8 @@
 							$cloneMe.addClass(prefixTheClassName("split"));
 							
 							//if this node was ol element, the child should continue the number ordering
-							var startWith = $clone.get(0).childElementCount + $clone.get(0).start;
 							if($cloneMe.get(0).tagName == 'OL'){
+								var startWith = $clone.get(0).childElementCount + $clone.get(0).start;
 								$cloneMe.attr('start',startWith+1);
 							}
 							
