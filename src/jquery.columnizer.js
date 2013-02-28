@@ -95,15 +95,11 @@
 		
 		if(!options.buildOnce){
 			$(window).resize(function() {
-				if(!options.buildOnce && $.browser.msie){
+				if(!options.buildOnce){
 					if($inBox.data("timeout")){
 						clearTimeout($inBox.data("timeout"));
 					}
 					$inBox.data("timeout", setTimeout(columnizeIt, 200));
-				}else if(!options.buildOnce){
-					columnizeIt();
-				}else{
-					// don't rebuild
 				}
 			});
 		}
