@@ -41,7 +41,7 @@
 		cssClassPrefix : ""
 	};
 	var options = $.extend(defaults, options);
-	
+
 	if(typeof(options.width) == "string"){
 		options.width = parseInt(options.width);
 		if(isNaN(options.width)){
@@ -50,7 +50,7 @@
 	}
 
     return this.each(function() {
-	    var $inBox = options.target ? $(options.target) : $(this);
+		var $inBox = options.target ? $(options.target) : $(this);
 		var maxHeight = $(this).height();
 		var $cache = $('<div></div>'); // this is where we'll put the real content
 		var lastWidth = 0;
@@ -61,38 +61,38 @@
 			cssClassPrefix = options.cssClassPrefix;
 		}
 
-		
+
 		var adjustment = 0;
-		
+
 		$cache.append($(this).contents().clone(true));
-	    
-	    // images loading after dom load
-	    // can screw up the column heights,
-	    // so recolumnize after images load
-	    if(!options.ignoreImageLoading && !options.target){
-	    	if(!$inBox.data("imageLoaded")){
-		    	$inBox.data("imageLoaded", true);
-		    	if($(this).find("img").length > 0){
-		    		// only bother if there are
-		    		// actually images...
-			    	var func = function($inBox,$cache){ return function(){
-				    	if(!$inBox.data("firstImageLoaded")){
-				    		$inBox.data("firstImageLoaded", "true");
-					    	$inBox.empty().append($cache.children().clone(true));
-					    	$inBox.columnize(options);
-				    	}
-			    	}}($(this), $cache);
-				    $(this).find("img").one("load", func);
-				    $(this).find("img").one("abort", func);
-				    return;
-		    	}
-	    	}
-	    }
-	    
+
+		// images loading after dom load
+		// can screw up the column heights,
+		// so recolumnize after images load
+		if(!options.ignoreImageLoading && !options.target){
+			if(!$inBox.data("imageLoaded")){
+				$inBox.data("imageLoaded", true);
+				if($(this).find("img").length > 0){
+					// only bother if there are
+					// actually images...
+					var func = function($inBox,$cache){ return function(){
+						if(!$inBox.data("firstImageLoaded")){
+							$inBox.data("firstImageLoaded", "true");
+							$inBox.empty().append($cache.children().clone(true));
+							$inBox.columnize(options);
+						}
+					}}($(this), $cache);
+					$(this).find("img").one("load", func);
+					$(this).find("img").one("abort", func);
+					return;
+				}
+			}
+		}
+
 		$inBox.empty();
-		
+
 		columnizeIt();
-		
+
 		if(!options.buildOnce){
 			$(window).resize(function() {
 				if(!options.buildOnce){
@@ -103,7 +103,7 @@
 				}
 			});
 		}
-		
+
 		function prefixTheClassName(className, withDot){
 			var dot = withDot ? "." : "";
 			if(cssClassPrefix.length){
@@ -111,8 +111,7 @@
 			}
 			return dot + className;
 		}
-		
-         
+
 		/**
 		 * this fuction builds as much of a column as it can without
 		 * splitting nodes in half. If the last node in the new column
@@ -134,7 +133,7 @@
 			// add as many nodes to the column as we can,
 			// but stop once our height is too tall
 			while((manualBreaks || $parentColumn.height() < targetHeight) &&
-				  $pullOutHere[0].childNodes.length){
+				$pullOutHere[0].childNodes.length){
 				var node = $pullOutHere[0].childNodes[0]
 				//
 				// Because we're not cloning, jquery will actually move the element"
@@ -152,14 +151,13 @@
 				$putInHere.append(node);
 			}
 			if($putInHere[0].childNodes.length == 0) return;
-			
+
 			// now we're too tall, so undo the last one
 			var kids = $putInHere[0].childNodes;
 			var lastKid = kids[kids.length-1];
 			$putInHere[0].removeChild(lastKid);
 			var $item = $(lastKid);
-			
-			//
+
 			// now lets try to split that last node
 			// to fit as much of it as we can into this column
 			if($item[0].nodeType == 3){
@@ -179,7 +177,7 @@
 					}
 					latestTextNode = document.createTextNode(columnText);
 					$putInHere.append(latestTextNode);
-					
+
 					if(oText.length > counter2 && indexOfSpace != -1){
 						oText = oText.substring(indexOfSpace);
 					}else{
@@ -197,16 +195,16 @@
 					return false; // we ate the whole text node, move on to the next node
 				}
 			}
-			
+
 			if($pullOutHere.contents().length){
 				$pullOutHere.prepend($item);
 			}else{
 				$pullOutHere.append($item);
 			}
-			
+
 			return $item[0].nodeType == 3;
 		}
-		
+
 		/**
 		 * Split up an element, which is more complex than splitting text. We need to create 
 		 * two copies of the element with it's contents divided between each
@@ -227,7 +225,7 @@
 				//
 				// make sure we're splitting an element
 				if($cloneMe.get(0).nodeType != 1) return;
-				
+
 				//
 				// clone the node with all data and events
 				var $clone = $cloneMe.clone(true);
@@ -244,7 +242,7 @@
 					// keep adding until we hit a manual break
 					$putInHere.append($clone);
 					$cloneMe.remove();
-				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass(prefixTheClassName("dontend"))){ 
+				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass(prefixTheClassName("dontend"))){
 					$putInHere.append($clone);
 					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
@@ -288,21 +286,21 @@
 				}
 			}
 		}
-		
-		
+
+
 		function singleColumnizeIt() {
 			if ($inBox.data("columnized") && $inBox.children().length == 1) {
 				return;
 			}
 			$inBox.data("columnized", true);
 			$inBox.data("columnizing", true);
-			
+
 			$inBox.empty();
 			$inBox.append($("<div class='"
-			 + prefixTheClassName("first") + " "
-			 + prefixTheClassName("last") + " "
-			 + prefixTheClassName("column") + " "
-			 + "' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
+				+ prefixTheClassName("first") + " "
+				+ prefixTheClassName("last") + " "
+				+ prefixTheClassName("column") + " "
+				+ "' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children().eq($inBox.children().length-1);
 			$destroyable = $cache.clone(true);
 			if(options.overflow){
@@ -312,7 +310,7 @@
 				if(!$destroyable.contents().find(":first-child").hasClass(prefixTheClassName("dontend"))){
 					split($col, $destroyable, $col, targetHeight);
 				}
-				
+
 				while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 					var $lastKid = $col.contents(":last");
 					$lastKid.remove();
@@ -341,13 +339,13 @@
 				$col.append($destroyable);
 			}
 			$inBox.data("columnizing", false);
-			
+
 			if(options.overflow && options.overflow.doneFunc){
 				options.overflow.doneFunc();
 			}
-			
+
 		}
-		
+
 		/**
 		 * returns true if the input dom node
 		 * should not end a column.
@@ -359,10 +357,10 @@
 				// is not 100% whitespace
 				if(/^\s+$/.test(dom.nodeValue)){
 						//
-				        // ok, it's 100% whitespace,
-				        // so we should return checkDontEndColumn
-				        // of the inputs previousSibling
-				        if(!dom.previousSibling) return false;
+						// ok, it's 100% whitespace,
+						// so we should return checkDontEndColumn
+						// of the inputs previousSibling
+						if(!dom.previousSibling) return false;
 					return checkDontEndColumn(dom.previousSibling);
 				}
 				return false;
@@ -372,15 +370,13 @@
 			if(dom.childNodes.length == 0) return false;
 			return checkDontEndColumn(dom.childNodes[dom.childNodes.length-1]);
 		}
-		
-		
-		
+
 		function columnizeIt() {
 			//reset adjustment var
 			adjustment = 0;
 			if(lastWidth == $inBox.width()) return;
 			lastWidth = $inBox.width();
-			
+
 			var numCols = Math.round($inBox.width() / options.width);
 			var optionWidth = options.width;
 			var optionHeight = options.height;
@@ -389,7 +385,7 @@
 				numCols = $cache.find(prefixTheClassName("columnbreak", true)).length + 1;
 				optionWidth = false;
 			}
-			
+
 //			if ($inBox.data("columnized") && numCols == $inBox.children().length) {
 //				return;
 //			}
@@ -399,14 +395,14 @@
 			if($inBox.data("columnizing")) return;
 			$inBox.data("columnized", true);
 			$inBox.data("columnizing", true);
-			
+
 			$inBox.empty();
 			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children(":last");
 			$col.append($cache.clone());
 			maxHeight = $col.height();
 			$inBox.empty();
-			
+
 			var targetHeight = maxHeight / numCols;
 			var firstTime = true;
 			var maxLoops = 3;
@@ -419,7 +415,7 @@
 				targetHeight = optionHeight;
 				scrollHorizontally = true;
 			}
-			
+
 			//
 			// We loop as we try and workout a good height to use. We know it initially as an average 
 			// but if the last column is higher than the first ones (which can happen, depending on split
@@ -446,7 +442,7 @@
 					var className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
-				
+
 				// fill all but the last column (unless overflowing)
 				var i = 0;
 				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.contents().length){
@@ -461,14 +457,14 @@
 					columnize($col, $destroyable, $col, targetHeight);
 					// make sure that the last item in the column isn't a "dontend"
 					split($col, $destroyable, $col, targetHeight);
-					
+
 					while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
 						var $lastKid = $col.contents(":last");
 						$lastKid.remove();
 						$destroyable.prepend($lastKid);
 					}
 					i++;
-					
+
 					//
 					// https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues/47
 					//
@@ -498,7 +494,7 @@
 							numCols ++;
 						}
 					}
-					
+
 				}
 				if(options.overflow && !scrollHorizontally){
 					var IE6 = false /*@cc_on || @_jscript_version < 5.7 @*/;
