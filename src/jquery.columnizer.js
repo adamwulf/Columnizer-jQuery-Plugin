@@ -76,12 +76,13 @@
 					// only bother if there are
 					// actually images...
 					var func = function($inBox,$cache){ return function(){
-						if(!$inBox.data("firstImageLoaded")){
-							$inBox.data("firstImageLoaded", "true");
-							$inBox.empty().append($cache.children().clone(true));
-							$inBox.columnize(options);
-						}
-					}}($(this), $cache);
+							if(!$inBox.data("firstImageLoaded")){
+								$inBox.data("firstImageLoaded", "true");
+								$inBox.empty().append($cache.children().clone(true));
+								$inBox.columnize(options);
+							}
+						};
+					}($(this), $cache);
 					$(this).find("img").one("load", func);
 					$(this).find("img").one("abort", func);
 					return;
@@ -134,7 +135,7 @@
 			// but stop once our height is too tall
 			while((manualBreaks || $parentColumn.height() < targetHeight) &&
 				$pullOutHere[0].childNodes.length){
-				var node = $pullOutHere[0].childNodes[0]
+				var node = $pullOutHere[0].childNodes[0];
 				//
 				// Because we're not cloning, jquery will actually move the element"
 				// http://welcome.totheinter.net/2009/03/19/the-undocumented-life-of-jquerys-append/
@@ -543,7 +544,8 @@
 							if(h < min) min = h;
 							numberOfColumnsThatDontEndInAColumnBreak++;
 						}
-					}}($inBox));
+					};
+				}($inBox));
 
 					var avgH = totalH / numberOfColumnsThatDontEndInAColumnBreak;
 					if(totalH === 0){
