@@ -40,7 +40,7 @@
 		// default to empty string for backwards compatibility
 		cssClassPrefix : ""
 	};
-	var options = $.extend(defaults, options);
+	options = $.extend(defaults, options);
 
 	if(typeof(options.width) == "string"){
 		options.width = parseInt(options.width);
@@ -440,12 +440,12 @@
 					/* create column */
 					var className = (i === 0) ? prefixTheClassName("first") : "";
 					className += " " + prefixTheClassName("column");
-					var className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
+					className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
 
 				// fill all but the last column (unless overflowing)
-				var i = 0;
+				i = 0;
 				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.contents().length){
 					if($inBox.children().length <= i){
 						// we ran out of columns, make another
