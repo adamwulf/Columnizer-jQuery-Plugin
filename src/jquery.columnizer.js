@@ -578,7 +578,7 @@
 					$inBox.children().each(function(i){
 						$col = $inBox.children().eq(i);
 						$col.width(optionWidth + "px");
-						if(i==0){
+						if(i === 0){
 							$col.addClass(prefixTheClassName("first"));
 						}else if(i==$inBox.children().length-1){
 							$col.addClass(prefixTheClassName("last"));
