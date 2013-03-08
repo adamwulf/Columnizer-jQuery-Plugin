@@ -427,7 +427,7 @@
 			// options that would cause an infinite loop, then this'll definitely stop it.
 			for(var loopCount=0;loopCount<maxLoops && maxLoops < 20;loopCount++){
 				$inBox.empty();
-				var $destroyable;
+				var $destroyable, className, $col, $lastKid;
 				try{
 					$destroyable = $cache.clone(true);
 				}catch(e){
@@ -438,7 +438,7 @@
 				// create the columns
 				for (var i = 0; i < numCols; i++) {
 					/* create column */
-					var className = (i === 0) ? prefixTheClassName("first") : "";
+					className = (i === 0) ? prefixTheClassName("first") : "";
 					className += " " + prefixTheClassName("column");
 					className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
@@ -451,7 +451,7 @@
 						// we ran out of columns, make another
 						$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 					}
-					var $col = $inBox.children().eq(i);
+					$col = $inBox.children().eq(i);
 					if(scrollHorizontally){
 						$col.width(optionWidth + "px");
 					}
@@ -460,7 +460,7 @@
 					split($col, $destroyable, $col, targetHeight);
 
 					while($col.contents(":last").length && checkDontEndColumn($col.contents(":last").get(0))){
-						var $lastKid = $col.contents(":last");
+						$lastKid = $col.contents(":last");
 						$lastKid.remove();
 						$destroyable.prepend($lastKid);
 					}
