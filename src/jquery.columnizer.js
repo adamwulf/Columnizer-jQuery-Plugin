@@ -185,7 +185,7 @@
 						oText = "";
 					}
 				}
-				if($parentColumn.height() >= targetHeight && latestTextNode != null){
+				if($parentColumn.height() >= targetHeight && latestTextNode !== null){
 					// too tall :(
 					$putInHere[0].removeChild(latestTextNode);
 					oText = latestTextNode.nodeValue + oText;
@@ -505,7 +505,7 @@
 						var div = document.createElement('DIV');
 						while($destroyable[0].childNodes.length > 0){
 							var kid = $destroyable[0].childNodes[0];
-							for(var i=0;i<kid.attributes.length;i++){
+							for(i=0;i<kid.attributes.length;i++){
 								if(kid.attributes[i].nodeName.indexOf("jQuery") === 0){
 									kid.removeAttribute(kid.attributes[i].nodeName);
 								}
