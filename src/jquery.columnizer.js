@@ -43,7 +43,7 @@
 	options = $.extend(defaults, options);
 
 	if(typeof(options.width) == "string"){
-		options.width = parseInt(options.width);
+		options.width = parseInt(options.width,10);
 		if(isNaN(options.width)){
 			options.width = defaults.width;
 		}
