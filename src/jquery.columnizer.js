@@ -150,7 +150,7 @@
 				}
 				$putInHere.append(node);
 			}
-			if($putInHere[0].childNodes.length == 0) return;
+			if($putInHere[0].childNodes.length === 0) return;
 
 			// now we're too tall, so undo the last one
 			var kids = $putInHere[0].childNodes;
@@ -278,7 +278,7 @@
 							// split class and move on.
 							$cloneMe.addClass(prefixTheClassName("split"));
 						}
-						if($clone.get(0).childNodes.length == 0){
+						if($clone.get(0).childNodes.length === 0){
 							// it was split, but nothing is in it :(
 							$clone.remove();
 						}
@@ -323,7 +323,7 @@
 					var kid = $destroyable[0].childNodes[0];
 					if(kid.attributes){
 						for(var i=0;i<kid.attributes.length;i++){
-							if(kid.attributes[i].nodeName.indexOf("jQuery") == 0){
+							if(kid.attributes[i].nodeName.indexOf("jQuery") === 0){
 								kid.removeAttribute(kid.attributes[i].nodeName);
 							}
 						}
@@ -367,7 +367,7 @@
 			}
 			if(dom.nodeType != 1) return false;
 			if($(dom).hasClass(prefixTheClassName("dontend"))) return true;
-			if(dom.childNodes.length == 0) return false;
+			if(dom.childNodes.length === 0) return false;
 			return checkDontEndColumn(dom.childNodes[dom.childNodes.length-1]);
 		}
 
@@ -437,7 +437,7 @@
 				// create the columns
 				for (var i = 0; i < numCols; i++) {
 					/* create column */
-					var className = (i == 0) ? prefixTheClassName("first") : "";
+					var className = (i === 0) ? prefixTheClassName("first") : "";
 					className += " " + prefixTheClassName("column");
 					var className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
 					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
@@ -475,7 +475,7 @@
 					//
 					// this results in empty columns being added with the dontsplit item
 					// perpetually waiting to get put into a column. lets force the issue here
-					if($col.contents().length == 0 && $destroyable.contents().length){
+					if($col.contents().length === 0 && $destroyable.contents().length){
 						//
 						// ok, we're building zero content columns. this'll happen forever
 						// since nothing can ever get taken out of destroyable.
@@ -505,7 +505,7 @@
 						while($destroyable[0].childNodes.length > 0){
 							var kid = $destroyable[0].childNodes[0];
 							for(var i=0;i<kid.attributes.length;i++){
-								if(kid.attributes[i].nodeName.indexOf("jQuery") == 0){
+								if(kid.attributes[i].nodeName.indexOf("jQuery") === 0){
 									kid.removeAttribute(kid.attributes[i].nodeName);
 								}
 							}
@@ -546,7 +546,7 @@
 					}}($inBox));
 
 					var avgH = totalH / numberOfColumnsThatDontEndInAColumnBreak;
-					if(totalH == 0){
+					if(totalH === 0){
 						//
 						// all columns end in a column break,
 						// so we're done here
