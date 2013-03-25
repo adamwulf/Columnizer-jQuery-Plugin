@@ -428,7 +428,7 @@
 			// also, lets hard code the max loops to 20. that's /a lot/ of loops for columnizer,
 			// and should keep run aways in check. if somehow someone has content combined with
 			// options that would cause an infinite loop, then this'll definitely stop it.
-			for(var loopCount=0;loopCount<maxLoops && maxLoops < 20;loopCount++){
+			for(var loopCount=0;loopCount<maxLoops && loopCount<20;loopCount++){
 				$inBox.empty();
 				var $destroyable;
 				try{
