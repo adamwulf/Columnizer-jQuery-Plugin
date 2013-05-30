@@ -522,7 +522,9 @@
 				}else if(!scrollHorizontally){
 					// the last column in the series
 					$col = $inBox.children().eq($inBox.children().length-1);
-					while($destroyable.contents().length) $col.append($destroyable.contents(":first"));
+					$destroyable.contents().each( function() {
+						$col.append( $(this) );
+					});
 					var afterH = $col.height();
 					var diff = afterH - targetHeight;
 					var totalH = 0;
