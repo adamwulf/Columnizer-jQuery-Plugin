@@ -498,7 +498,6 @@
 							numCols ++;
 						}
 					}
-					
 				}
 				if(options.overflow && !scrollHorizontally){
 					var IE6 = false /*@cc_on || @_jscript_version < 5.7 @*/;
