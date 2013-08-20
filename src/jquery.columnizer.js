@@ -344,7 +344,7 @@
 				overflow.innerHTML = html;
 
 			}else{
-				$col.append($destroyable);
+				$col.append($destroyable.contents());
 			}
 			$inBox.data("columnizing", false);
 
