@@ -271,6 +271,13 @@
 							// this node still has non-text nodes to split
 							// add the split class and then recur
 							$cloneMe.addClass(prefixTheClassName("split"));
+							
+							//if this node was ol element, the child should continue the number ordering
+							if($cloneMe.get(0).tagName == 'OL'){
+								var startWith = $clone.get(0).childElementCount + $clone.get(0).start;
+								$cloneMe.attr('start',startWith+1);
+							}
+							
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, targetHeight);
 							}
