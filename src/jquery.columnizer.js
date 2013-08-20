@@ -225,7 +225,7 @@
 				var $cloneMe = $pullOutHere.contents(":first");
 				//
 				// make sure we're splitting an element
-				if($cloneMe.get(0).nodeType != 1) return;
+				if( typeof $cloneMe.get(0) == 'undefined' || $cloneMe.get(0).nodeType != 1 ) return;
 
 				//
 				// clone the node with all data and events
