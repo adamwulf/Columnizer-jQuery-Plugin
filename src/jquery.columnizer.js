@@ -250,7 +250,7 @@
 						// we can't split an img in half, so just add it
 						// to the column and remove it from the pullOutHere section
 						$cloneMe.remove();
-					}else if(!$cloneMe.hasClass(prefixTheClassName("dontsplit")) && $parentColumn.height() < targetHeight + 20){
+					}else if($cloneMe.hasClass(prefixTheClassName("dontsplit")) && $parentColumn.height() < targetHeight + 20){
 						//
 						// pretty close fit, and we're not allowed to split it, so just
 						// add it to the column, remove from pullOutHere, and be done
