@@ -170,9 +170,16 @@
 				var columnText;
 				var latestTextNode = null;
 				while($parentColumn.height() < targetHeight && oText.length){
+					//
+					// it's been brought up that this won't work for chinese
+					// or other languages that don't have the same use of whitespace
+					// as english. This will need to be updated in the future
+					// to better handle non-english languages.
+					//
+					// https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues/124
 					var indexOfSpace = oText.indexOf(' ', counter2);
 					if (indexOfSpace != -1) {
-						columnText = oText.substring(0, oText.indexOf(' ', counter2));
+						columnText = oText.substring(0, indexOfSpace);
 					} else {
 						columnText = oText;
 					}
