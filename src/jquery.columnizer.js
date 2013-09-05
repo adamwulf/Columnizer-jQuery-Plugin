@@ -576,7 +576,7 @@
 						// hopefully this'll mean more content fits into
 						// earlier columns, so that the last column
 						// can be shorter than the rest
-						adjustment += 30;
+						adjustment += 5;
 
 						targetHeight = targetHeight + 30;
 						if(loopCount == maxLoops-1) maxLoops++;
