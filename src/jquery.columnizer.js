@@ -150,7 +150,25 @@
 					return;
 				}
 				$putInHere.append(node);
-			}
+
+                // skip this node if too big and fuzzypos
+                if(!manualBreaks && $(node).hasClass(prefixTheClassName("fuzzypos")) && ($parentColumn.height() > targetHeight) && $pullOutHere[0].childNodes.length) {
+                    var skip = [];
+                    do {
+                        //move fuzzy element to skip array
+                        skip.unshift($(node));
+                        //use next node instead
+                        node = $pullOutHere[0].childNodes[0];
+                        $putInHere.append(node);
+
+                    } while($(node).hasClass(prefixTheClassName("fuzzypos")) && ($parentColumn.height() > targetHeight) && $pullOutHere[0].childNodes.length); 
+                    //put fuzzy items back in the queue
+                    $.each(skip, function(k, v) {
+                            $pullOutHere.prepend(v);
+                        });  
+                }
+
+            }
 			if($putInHere[0].childNodes.length === 0) return;
 
 			// now we're too tall, so undo the last one
