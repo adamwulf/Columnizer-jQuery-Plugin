@@ -192,7 +192,7 @@
 				counter2 = options.accuracy;
 				var columnText;
 				var latestTextNode = null;
-				while($parentColumn.height() < targetHeight && oText.length){
+                while($parentColumn.height() <= (targetHeight + 20) && oText.length){
 					//
 					// it's been brought up that this won't work for chinese
 					// or other languages that don't have the same use of whitespace
