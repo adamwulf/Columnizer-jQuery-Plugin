@@ -130,6 +130,8 @@
 		 * @param targetHeight, the ideal height for the column, get as close as we can to this height
 		 */
 		function columnize($putInHere, $pullOutHere, $parentColumn, targetHeight){
+            //allow fuzzypos skipping        
+            var $skip = $('<div class="fuzzypos"></div>');
 			//
 			// add as many nodes to the column as we can,
 			// but stop once our height is too tall
@@ -150,7 +152,23 @@
 					return;
 				}
 				$putInHere.append(node);
-			}
+
+                // skip this node if too big and fuzzypos
+                if(!manualBreaks && $(node).hasClass(prefixTheClassName("fuzzypos")) && ($parentColumn.height() > targetHeight) && $pullOutHere[0].childNodes.length && ($putInHere[0].childNodes.length > 1)) {
+                    do {
+                        //move fuzzy element to $skip
+                        $skip.prepend($(node));
+                        //use next node instead
+                        node = $pullOutHere[0].childNodes[0];
+                        $putInHere.append(node);
+                    } while($(node).hasClass(prefixTheClassName("fuzzypos")) && ($parentColumn.height() > targetHeight) && $pullOutHere[0].childNodes.length); 
+                    //put fuzzy items back in the queue
+                    /*$.each(skip, function(k, v) {
+                            $pullOutHere.prepend(v);
+                        });*/  
+                }
+
+            }
 			if($putInHere[0].childNodes.length === 0) return;
 
 			// now we're too tall, so undo the last one
@@ -158,6 +176,11 @@
 			var lastKid = kids[kids.length-1];
 			$putInHere[0].removeChild(lastKid);
 			var $item = $(lastKid);
+
+            //put fuzzy items back in the queue
+            $skip.contents().each(function() {
+                    $pullOutHere.prepend($(this));
+                });       
 
 			// now lets try to split that last node
 			// to fit as much of it as we can into this column
@@ -169,7 +192,7 @@
 				counter2 = options.accuracy;
 				var columnText;
 				var latestTextNode = null;
-				while($parentColumn.height() < targetHeight && oText.length){
+                while($parentColumn.height() <= (targetHeight + 20) && oText.length){
 					//
 					// it's been brought up that this won't work for chinese
 					// or other languages that don't have the same use of whitespace
@@ -204,6 +227,7 @@
 				}
 			}
 
+            //add split content back to queue
 			if($pullOutHere.contents().length){
 				$pullOutHere.prepend($item);
 			}else{
@@ -230,6 +254,7 @@
 			}
 			if($pullOutHere.contents().length){
 				var $cloneMe = $pullOutHere.contents(":first");
+                var $fuzzypos = $cloneMe.next('.fuzzypos');
 				//
 				// make sure we're splitting an element
 				if( typeof $cloneMe.get(0) == 'undefined' || $cloneMe.get(0).nodeType != 1 ) return;
@@ -274,6 +299,7 @@
 						// the node in the column we're building, and start splitting
 						// it in half, leaving some of it in pullOutHere
 						$clone.empty();
+
 						if(!columnize($clone, $cloneMe, $parentColumn, targetHeight)){
 							// this node still has non-text nodes to split
 							// add the split class and then recur
@@ -288,11 +314,18 @@
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, targetHeight);
 							}
+                        
 						}else{
 							// this node only has text node children left, add the
 							// split class and move on.
 							$cloneMe.addClass(prefixTheClassName("split"));
-						}
+                        }
+
+                        //precede split element with fuzzypos, if there
+                        if($fuzzypos.size()) {
+                            $pullOutHere.prepend($fuzzypos);
+                        }     
+
 						if($clone.get(0).childNodes.length === 0){
 							// it was split, but nothing is in it :(
 							$clone.remove();
