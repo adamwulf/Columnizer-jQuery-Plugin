@@ -48,6 +48,20 @@
 			options.width = defaults.width;
 		}
 	}
+		
+	/**
+	 * appending a text node to a <table> will
+	 * cause a jquery crash.
+	 * so wrap all append() calls and revert to
+	 * a simple appendChild() in case it fails
+	 */
+	function appendSafe($target, $elem){
+		try{
+			$target.append($elem);
+		}catch(e){
+			$target[0].appendChild($elem[0]);
+		}
+	}
 
     return this.each(function() {
 		var $inBox = options.target ? $(options.target) : $(this);
@@ -64,7 +78,7 @@
 
 		var adjustment = 0;
 
-		$cache.append($(this).contents().clone(true));
+		appendSafe($cache, $(this).contents().clone(true));
 
 		// images loading after dom load
 		// can screw up the column heights,
@@ -78,7 +92,7 @@
 					var func = function($inBox,$cache){ return function(){
 							if(!$inBox.data("firstImageLoaded")){
 								$inBox.data("firstImageLoaded", "true");
-								$inBox.empty().append($cache.children().clone(true));
+								appendSafe($inBox.empty(), $cache.children().clone(true));
 								$inBox.columnize(options);
 							}
 						};
@@ -149,7 +163,7 @@
 					// our column is on a column break, so just end here
 					return;
 				}
-				$putInHere.append(node);
+				appendSafe($putInHere, $(node));
 			}
 			if($putInHere[0].childNodes.length === 0) return;
 
@@ -184,7 +198,7 @@
 						columnText = oText;
 					}
 					latestTextNode = document.createTextNode(columnText);
-					$putInHere.append(latestTextNode);
+					appendSafe($putInHere, $(latestTextNode));
 
 					if(oText.length > counter2 && indexOfSpace != -1){
 						oText = oText.substring(indexOfSpace);
@@ -207,7 +221,7 @@
 			if($pullOutHere.contents().length){
 				$pullOutHere.prepend($item);
 			}else{
-				$pullOutHere.append($item);
+				appendSafe($pullOutHere, $item);
 			}
 
 			return $item[0].nodeType == 3;
@@ -244,14 +258,14 @@
 					//
 					// ok, we have a columnbreak, so add it into
 					// the column and exit
-					$putInHere.append($clone);
+					appendSafe($putInHere, $clone);
 					$cloneMe.remove();
 				}else if (manualBreaks){
 					// keep adding until we hit a manual break
-					$putInHere.append($clone);
+					appendSafe($putInHere, $clone);
 					$cloneMe.remove();
 				}else if($clone.get(0).nodeType == 1 && !$clone.hasClass(prefixTheClassName("dontend"))){
-					$putInHere.append($clone);
+					appendSafe($putInHere, $clone);
 					if($clone.is("img") && $parentColumn.height() < targetHeight + 20){
 						//
 						// we can't split an img in half, so just add it
@@ -351,7 +365,7 @@
 				overflow.innerHTML = html;
 
 			}else{
-				$col.append($destroyable.contents());
+				appendSafe($col, $destroyable.contents());
 			}
 			$inBox.data("columnizing", false);
 
@@ -414,7 +428,7 @@
 			$inBox.empty();
 			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children(":last");
-			$col.append($cache.clone());
+			appendSafe($col, $cache.clone());
 			maxHeight = $col.height();
 			$inBox.empty();
 
