@@ -289,7 +289,7 @@
 						// it in half, leaving some of it in pullOutHere
 						$clone.empty();
 						if(!columnize($clone, $cloneMe, $parentColumn, targetHeight)){
-							// this node still has non-text nodes to split
+							// this node may still have non-text nodes to split
 							// add the split class and then recur
 							$cloneMe.addClass(prefixTheClassName("split"));
 							
@@ -310,6 +310,7 @@
 						if($clone.get(0).childNodes.length === 0){
 							// it was split, but nothing is in it :(
 							$clone.remove();
+							$cloneMe.removeClass(prefixTheClassName("split"));
 						}
 					}
 				}
