@@ -107,9 +107,15 @@ Columnizer will add CSS classes to the columns it creates. Each column will have
 1. You can specify a rough width your columns, and Columnizer will create as many as will fit in the browser window. Just use: $(‘selector’).columnize({width: 400 }) syntax
 2. You can specify a specific number of columns, and Columnizer will distribute your content between that many columns. Just use: $(‘selector’).columnize({columns: 2 }) syntax
 3. When using the width and height options to scroll horizontally, make sure that the .column CSS class does not specify any padding or margin or border. See CSS for sample 5 for an example on how to create buffer between columns.
-4. Make sure that you are columnizing visible content. If your content is display:none it may not columnize correctly. Try visibility:hidden and display:block instead.
+4. Make sure that you are columnizing visible content. If your content is display:none it may not columnize correctly. Try visibility:hidden and display:block instead. Or see hint 6.
 5. Columnizer does not auto-class any of your content. See the Suggested Defaults For Your Content section.
-
+6. When columnized content is inside tabs (and thus display is none), then you can call columnize function right after tab content is shown. Example for Bootstrap 3:
+```js
+$(document).on("shown.bs.tab", function(event) {
+	var tabSelector = $(event.target).attr("href");
+	$(tabSelector).find(".columnize").each(function(){ $(@).data('columnizeIt')() });
+});
+```
 
 ### Suggested Defaults For Your Content
 
