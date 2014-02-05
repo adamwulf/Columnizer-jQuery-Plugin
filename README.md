@@ -67,6 +67,14 @@ Columnizer will add CSS classes to the columns it creates. Each column will have
 <td style="text-align: right; padding-right: 10px;"><em>manualBreaks</em></td>
 <td style="padding-left: 10px;">Defaults to false. Set to true if you only want to create columns with manual column breaks. If true, then width, height, columns options are ignored.</td>
 </tr>
+<tr>
+<td style="text-align: right; padding-right: 10px;"><em>columnClassFunc</em></td>
+<td style="padding-left: 10px;">Optional function that will be called for each column to generate custom class selectors for sizing instead of inline width.<br>Eg: columnClassFunc: function(col) { return "grid-" + (12/col); }</td>
+</tr>
+<tr>
+<td style="text-align: right; padding-right: 10px;"><em>extraColumnClass</em></td>
+<td style="padding-left: 10px;">Extra classes to add to each column.</td>
+</tr>
 </tbody>
 </table>
 
