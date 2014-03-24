@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en-GB-oed" class="ie6 noJS"> <![endif]-->
+<!--[if IE 7]>         <html lang="en-GB-oed" class="ie7 noJS"> <![endif]-->
+<!--[if IE 8]>         <html lang="en-GB-oed" class="ie8 noJS"> <![endif]-->
+<!--[if IE 9]>         <html lang="en-GB-oed" class="ie9 noJS"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en-GB-oed" class="noJS"> <!--<![endif]-->
+<head>
+<!-- This website is written by a guy who claims to have lots of specialised technical skills, but this website only partially demonstrates them.  This website is a vehicle for about 70,000 words, please read some of them. -->
+<title>Site changelist</title>
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB-oed" />
+<meta name="Generator" content="iceline webkit 0.6" />
+<meta name="Author" content="Owen Beresford" />
+<meta name="Description" content="This is list of things at I have changed in this site" />
+
+<link rel="stylesheet" type="text/css" href="/resource/reach-positional" />
+<link rel="stylesheet" type="text/css" href="/asset/qunit-1.11.0.css" />
+
+<script type="text/javascript" src="/asset/jquery-1.10.2" ></script>
+<script type="text/javascript" src="/asset/jquery.columnizer.js"></script>
+<script type="text/javascript" src="/asset/qunit-1.11.0.js"></script>
+<script type="text/javascript" >
+var $ice={ 
+		last:0, 
+		resize_registered:0, 
+		menu_done:0,
+	 	menu_duration:4,
+		debug:1,
+		min_size:150,
+		tabs:[],
+		resizeTO:undefined,
+		resizeDelay:500,
+		maxLength:2500,  // this is the number of letters, its faster than words...
+	};
+
+window.currentSize=function() {
+ var d= document, root= d.documentElement, body= d.body;
+ var wid= window.innerWidth || root.clientWidth || body.clientWidth;
+ var hi= window.innerHeight || root.clientHeight || body.clientHeight ;
+ wid=parseInt(wid);
+ hi=parseInt(hi);
+ return [wid,hi];
+}
+
+var $ice_col=function() {
+	var $t1=window.currentSize();
+// only apply when asked to, and have enough content
+	var $t2=$('.lotsOfWords');
+	if($t2.length==0 || $t2.text().length<500) {
+		return;
+	}
+
+// hopefully phones changing orientation won't break things...
+// can double buffer to reduce flicker, if so append target:"#showhere" 
+	var $colno	=0;
+	if($t1[0]>1200) {
+		$colno	=3;
+	} else if($t1[0]>650) {
+		$colno	=2;
+	}
+	if($ice.debug ) {
+		console.log("Text split into "+$colno+" columns.");
+	}
+	$t2.columnize({ columns:$colno, buildOnce:true });
+	$t2.renumberByJS('ol', $colno, null, 'column');
+
+// $searchTag, $colno, $targetId, $targetClass 
+//
+// my manual resetting the columnisation is a mark of poor architecture.
+// this should be in CSS or in JS, not both
+//. . . but the counters allow content injected into the structures without breaking any DOM.
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/grouping-content.html#attr-ol-start
+}; 
+
+var $and_we_will_count_them_on_the_beaches=function() {	
+	var $tcol	= $('.column');
+	var $t1		= window.currentSize();
+	var $tag	= 'ol';
+	
+	var $colno	= 0;
+	if($t1[0]>1200) {
+		$colno	= 3;
+	} else if($t1[0]>650) {
+		$colno	= 2;
+	}
+	expect($colno==3?8:3);
+	ok(($tcol.length===$colno), location.pathname+": Correct cols "+$colno);
+
+	var $t2		=$($tcol[1]).find(">"+$tag+':first');
+	ok((parseInt($t2.attr('start'))==$($tcol[0]).find(">"+$tag+':last').children().length),
+		location.pathname+"#1: Offset matches expected ");
+
+	var $t4		=$($tcol[1]).find(">"+$tag+':first li:first '+$tag);
+	var $t5		=$($tcol[0]).find(">"+$tag+':last li:last '+$tag);
+	if($t5.children().length) {
+		ok( (parseInt($t4.attr('start'))==$t5.children().length),
+			location.pathname+"#2: Offset of inner list matches expected ");
+	} else {
+		ok((1 == 1), location.pathname+"#2: null text, no inner list");
+	}
+
+
+	if($tcol[2]) {
+		var $t3	=$($tcol[2]).find($tag+':first');
+
+		ok(parseInt($t3.attr('start'))!=$($tcol[1]).find(">"+$tag+':last').children().length, 
+			location.pathname+"#3: Offset !matches last column " );
+		ok(parseInt($t3.attr('start'))==$($tcol[1]).find(">"+$tag+':last').children().length +$($tcol[0]).find(">"+$tag+':last').children().length , 			
+			location.pathname+"#4: Offset matches both prev columns (with no split lists, will fail if there are...) " );
+
+		var $t6	=$($tcol[1]).find(">"+$tag+':first >li:first '+$tag+" li.split");
+		if($t6.length) {
+			ok(parseInt($t3.attr('start'), 10)+1==$($tcol[1]).find(">"+$tag+':last').children().length +$($tcol[0]).find(">"+$tag+':last').children().length , 			
+			location.pathname+"#5: offset matches, with a split list" );
+
+			$t4	=$($tcol[2]).find(">"+$tag+':first li.split:first '+$tag);
+			$t5	=$($tcol[1]).find(">"+$tag+':last >li:last >'+$tag);
+
+			if($t4.children().length ) {
+				if($($tcol[2]).find(">"+$tag+':first li.split:first '+$tag+' li.split').length ) {
+					ok( (parseInt($t4.attr('start'), 10)) ==$t5.children().length,
+						location.pathname+"#6: Offset of inner list matches expected for a split list and split item ");
+				
+				} else {
+					ok( (parseInt($t4.attr('start'), 10))-1 ==$t5.children().length,
+						location.pathname+"#6: Offset of inner list matches expected for a split list NO split item");
+				}
+			} else {
+				ok((1 == 1), location.pathname+"#6: null text, no split inner list");
+			}
+		} else {
+			ok( (1==1), location.pathname+"#5: skipped split list test..." );
+			ok( (1==1), location.pathname+"#6: skipped split list test..." );
+
+		}
+
+		$t4		=$($tcol[2]).find(">"+$tag+':first li:first '+$tag);
+		$t5		=$($tcol[1]).find(">"+$tag+':last li:last '+$tag);
+		if($t5.children().length) {
+			ok( (parseInt($t4.attr('start'), 10)-1==$t5.children().length),
+					location.pathname+"#7: Offset of inner list matches expected ");
+		} else {
+			ok((1 == 1), location.pathname+"#7: null text, no inner list");
+		}
+
+	}
+
+	return 0;
+}
+
+
+if(jQuery) {
+	$($ice_col);	
+// ref: http://en.wikipedia.org/wiki/We_shall_fight_on_the_beaches
+	if(location.search=='?no=1') {
+alert("HTML#162 "+$('#gainer').parent().attr('start'));
+		test("And we will count them in Normandy . . . ", $and_we_will_count_them_on_the_beaches);
+	} else {
+		test("we shall count on the seas and oceans . . . ", $and_we_will_count_them_on_the_beaches);
+
+	}
+}
+
+</script>
+
+</head>
+
+<body id="body">
+<div class="h4_page">
+<fieldset class="outer_menu">
+<legend></legend>
+<div class="h4_title"><h1>Site changelist</h1>
+<p class="alert">This resource will open a lot of other windows.  Let this happen...</p>
+<p>please read the HTML header &amp; fix links. Adam Wulf requested that I didn't add the test driver, so this is passive, the functioning version is <a href="http://owenberesford.me.uk/external/c1-parent.html">where I left it</a></p>
+<p>Annotation is <a href="http://owenberesford.me.uk/resource/columnise">written</a></p>
+</div>
+<br />
+</fieldset>
+
+<div class="after_menu">
+<br />
+<div class="blocker">
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<div class="lotsOfWords">
+<p>This is labelled as a change list not  change log, as I am not publishing dates, authors or PM tracking ids.  I am the author of everything.  This is targeting <em>the site</em>, not the CMS.</p>
+<h1 style="display:none;" id="rapunzel">Run as standard alone</h1>
+
+
+<p>Site Changes (old to new);</p>
+
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+    <li class="libasic">Public access, site is now visible;</li>
+    <li class="libasic">Add university work to the site to maintain parity with my CV;</li>
+    <li class="libasic">Add a tiny-url feature;</li>
+    <li class="libasic">Created strapline support (small text below the title);</li>
+    <li class="libasic">Add support for per-resource CSS and JS;</li>
+    <li class="libasic">Create a auto generated site-map resource;</li>
+    <li class="libasic">Adjust the footer again for readability;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Categorise the system pages to accessgroup 1 (so not in site-map);</li>
+    <li class="libasic">Add 'Content-Disposition' headers for binary downloads, msie will work properly now;</li>
+    <li class="libasic">Improve error flowback, so should you somehow break this you are told why it fails;</li>
+    <li class="libasic">The current codebase is to be a new version as soon as I have have time for the paperwork;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Re-add constants rather than define()'s, add PHP version constraint fail point;</li>
+    <li class="libasic">Is now 0.2.0, need to upload to host at some point;</li>
+    <li class="libasic">Add more test-cases;</li>
+    <li class="libasic">Confirm and add w3c status.  Do not understand their errors on strict xhtml, there is something about singleton tag they dislike.   This is on my todo list.  Oct 2013: Other people state there may be errors in the w3c validator;</li>
+    <li class="libasic">Accidentally implement language selection before realise this will never be used;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+</li>
+    <li class="libasic">Assorted error flow-back improvements in light of improved test suites;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+</li>
+    <li class="libasic">Add more test-cases;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+
+</li>
+    <li class="libasic">Split CV into different jobrole focused editions, add more project pages to website aka “Add more content”;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+</li>
+    <li class="libasic">Add robots.txt and support for robots meta;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+</li>
+    <li class="libasic">Start to create documentation for platform;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+
+</li>
+    <li class="libasic">Use documentation to determine missing test cases, create more;
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li id="gainer" class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+</li>
+    <li class="libasic">Use test cases to determine missing documentation, create more (these two items are abit recursive);
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+</ol>
+</li>
+    <li class="libasic">Add support for additional get args;</li>
+    <li class="libasic">Add a resource source viewer, second edition added to footer;</li>
+    <li class="libasic">Make version checking more useful, ought to upgrade code base version numbering;</li>
+    <li class="libasic">Deploy new version (random fixes as I spot things);</li>
+    <li class="libasic">Add HTML chunk support for random things that don't fit the current libraries;</li>
+    <li class="libasic">Add an alternative mechanism for POST functions when the lack of correct syntax hi-lighting makes it hard to edit;</li>
+    <li class="libasic">Test cases for POST retested, and made more useful;</li>
+    <li class="libasic">Improve rendering on internal page redirects;</li>
+    <li class="libasic">In a separate project, create a source form renderer.  This will imported into iceline at some point;</li>
+    <li class="libasic">Fix a batch of undefs I noticed whilst trying to get my sample for JDI to run;</li>
+    <li class="libasic">Not yet in this project, but add more features to the form renderer in JDI;</li>
+    <li class="libasic">Add alot of CSS &amp; JS for JDI;</li>
+    <li class="libasic">Add more articles;</li>
+    <li class="libasic">The page menus are now run through wiki;</li>
+    <li class="libasic">Adjusted footer, so all the CSS is in the CSS file, rather than verbatum from w3c, add file modified date text;</li>
+    <li class="libasic">Saw site in google listings, updated robots file.  Need a mechanism to down prioritise old contents in my “external” category, those are mostly older than 2004;</li>
+    <li class="libasic">Moved the HTML for the menu to the end of the document, hopefully google listing will be more useful now;</li>
+    <li class="libasic">WikiResource now supports HTML inclusions in the Wiki text, if tagged with '['.'noEscape]' and '['.'/noEscape]' to delimit areas to ignore.  Demonstrated on <a class="" href="http://owenberesford.me.uk/resource/search#">search</a>.  This will be refocused as a multi-format-file-protocol in due time, so it resembles the PNG format (only hand editable);</li>
+    <li class="libasic">Page menu made more useful, it will translate common URL symbols, before rasterisation;</li>
+    <li class="libasic">Add linked-in URL to footer, as a cross media connection;</li>
+    <li class="libasic">I am leaving the dates in the footer as a fairly ISO format as I think this is more useful to purpose.  The primary use case is discovering cached content, and currency of information;</li>
+    <li class="libasic">Adjust resource headers and menu at the top of the page, so it renders better on smaller screen sizes;</li>
+    <li class="libasic">I have wongled enough things so that the nested lists are functioning correctly.  This is a negotiation between the resource source file, and the Wiki library, I haven't added any code myself to manage this;</li>
+    <li class="libasic">Update content again;</li>
+    <li class="libasic">Add 'share' links to the pages;</li>
+    <li class="libasic">Improve error handling on dynamically created code in individual resources;</li>
+    <li class="libasic">File format2 &lt;applause&gt; &lt;parties&gt; &lt;ultra natey impressions&gt; &lt;wild dancing&gt;;</li>
+    <li class="libasic">Host updates to PHP5.4;</li>
+    <li class="libasic">Updated my test population, to run ALL v1.x features. Some stuff previously was rushed;</li>
+    <li class="libasic">Update my docs;</li>
+    <li class="libasic">Add more tests for v2;</li>
+    <li class="libasic">Add more docs for v2;</li>
+    <li class="libasic">&lt;format2 gets published to website here, Jan 2013&gt;;</li>
+    <li class="libasic">Source gets uploaded to source forge;</li>
+</ol>
+
+</div>
+</div>
+</div>
+<br />
+</div>
+<br class="blocker" />
+<div class="h4_footer"> I deleted the footer contents</div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en-GB-oed" class="ie6 noJS"> <![endif]-->
+<!--[if IE 7]>         <html lang="en-GB-oed" class="ie7 noJS"> <![endif]-->
+<!--[if IE 8]>         <html lang="en-GB-oed" class="ie8 noJS"> <![endif]-->
+<!--[if IE 9]>         <html lang="en-GB-oed" class="ie9 noJS"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en-GB-oed" class="noJS"> <!--<![endif]-->
+<head>
+<!-- This website is written by a guy who claims to have lots of specialised technical skills, but this website only partially demonstrates them.  This website is a vehicle for about 70,000 words, please read some of them. -->
+<title>Site changelist</title>
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB-oed" />
+<meta name="Generator" content="iceline webkit 0.6" />
+<meta name="Author" content="Owen Beresford" />
+<meta name="Description" content="This is list of things at I have changed in this site" />
+
+<link rel="stylesheet" type="text/css" href="/resource/reach-positional" />
+<link rel="stylesheet" type="text/css" href="/asset/qunit-1.11.0.css" />
+
+<script type="text/javascript" src="/asset/jquery-1.10.2" ></script>
+<script type="text/javascript" src="/asset/jquery.columnizer"></script>
+<script type="text/javascript" src="/asset/qunit-1.11.0.js"></script>
+<script type="text/javascript" >
+var $ice={ 
+		last:0, 
+		resize_registered:0, 
+		menu_done:0,
+	 	menu_duration:4,
+		debug:0,
+		min_size:150,
+		tabs:[],
+		resizeTO:undefined,
+		resizeDelay:500,
+		maxLength:2500,  // this is the number of letters, its faster than words...
+	};
+
+window.currentSize=function() {
+ var d= document, root= d.documentElement, body= d.body;
+ var wid= window.innerWidth || root.clientWidth || body.clientWidth;
+ var hi= window.innerHeight || root.clientHeight || body.clientHeight ;
+ wid=parseInt(wid);
+ hi=parseInt(hi);
+ return [wid,hi];
+}
+
+var $ice_col=function() {
+	var $t1=window.currentSize();
+// only apply when asked to, and have enough content
+	var $t2=$('.lotsOfWords');
+	if($t2.length==0 || $t2.text().length<500) {
+		return;
+	}
+
+// hopefully phones changing orientation won't break things...
+// can double buffer to reduce flicker, if so append target:"#showhere" 
+	var $colno	=0;
+	if($t1[0]>1200) {
+		$colno	=3;
+	} else if($t1[0]>650) {
+		$colno	=2;
+	}
+	if($ice.debug ) {
+		console.log("Text split into "+$colno+" columns.");
+	}
+	$t2.columnize({ columns:$colno, buildOnce:true });
+	$t2.renumberByJS('ol', $colno, null, 'column');
+
+// $searchTag, $colno, $targetId, $targetClass 
+//
+// my manual resetting the columnisation is a mark of poor architecture.
+// this should be in CSS or in JS, not both
+//. . . but the counters allow content injected into the structures without breaking any DOM.
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/grouping-content.html#attr-ol-start
+}; 
+
+var $and_we_will_count=function() {	
+	var $tcol	= $('.column');
+	var $t1		= window.currentSize();
+	var $tag	= 'ol';
+	
+	var $colno	= 0;
+	if($t1[0]>1200) {
+		$colno	= 3;
+	} else if($t1[0]>650) {
+		$colno	= 2;
+	}
+	expect($colno==3?4:2);
+	ok(($tcol.length===$colno), location.pathname+": Correct cols "+$colno);
+
+	var $t2		=$($tcol[1]).find($tag+':first');
+	var	$t4		=$($tcol[2]).find(">"+$tag+':first li.split:first ');
+
+	if( $($tcol[1]).find(">"+$tag+':first li.split:first ').length ) {
+		ok((parseInt($t2.attr('start'), 10)==$($tcol[0]).find(">"+$tag+':last').children().length),
+			location.pathname+"#1: Offset matches expected ");
+	} else {
+		ok((parseInt($t2.attr('start'), 10)-1==$($tcol[0]).find(">"+$tag+':last').children().length),
+			location.pathname+"#1: Offset matches expected ");
+	
+	}
+
+	if($tcol[2]) {
+		var $t3	=$($tcol[2]).find($tag+':first');
+		$t4	=$($tcol[2]).find(">"+$tag+':first li.split:first ');
+
+		if($t4.length) {
+			ok(parseInt($t3.attr('start'), 10)-1 != $($tcol[1]).find(">"+$tag+':last').children().length,
+	 			location.pathname+"#2: Offset !matches last column " );
+
+			ok(parseInt($t3.attr('start', 10)) ==$($tcol[1]).find(">"+$tag+':last').children().length +$($tcol[0]).find(">"+$tag+':last').children().length , 
+				location.pathname+"#3: Offset matches both prev columns " );
+
+		} else {
+			ok(parseInt($t3.attr('start'))!=$($tcol[1]).find(">"+$tag+':last').children().length, 
+				location.pathname+"#2: Offset !matches last column " );	
+
+			ok(parseInt($t3.attr('start'))==$($tcol[1]).find(">"+$tag+':last').children().length +$($tcol[0]).find(">"+$tag+':last').children().length +1, 
+				location.pathname+"#3: Offset matches both prev columns " );
+		}
+
+	}
+	return 0;
+}
+
+if(jQuery) {
+	$($ice_col);	
+// ref: http://en.wikipedia.org/wiki/We_shall_fight_on_the_beaches
+	if(location.search=='?no=1' ) {
+		test("And we will count.. ", $and_we_will_count);
+	} else {
+		test("We shall go on to the end. . . ", $and_we_will_count);
+	}
+}
+</script>
+</head>
+
+<body id="body">
+<div class="h4_page">
+<fieldset class="outer_menu">
+<legend></legend>
+<div class="h4_title"><h1>Site changelist</h1>
+<p class="alert">This resource will open a lot of other windows.  Let this happen...</p>
+<p>please read the HTML header &amp; fix links. Adam Wulf requested that I didn't add the test driver, so this is passive, the functioning version is <a href="http://owenberesford.me.uk/external/c1-parent.html">where I left it</a></p>
+<p>Annotation is <a href="http://owenberesford.me.uk/resource/columnise">written</a></p>
+</div>
+<br />
+</fieldset>
+
+<div class="after_menu">
+<br />
+<div class="blocker">
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<div class="lotsOfWords">
+<p>This is labelled as a change list not  change log, as I am not publishing dates, authors or PM tracking ids.  I am the author of everything.  This is targeting <em>the site</em>, not the CMS.</p>
+<h1 style="display:none;" id="rapunzel">Run as standard alone</h1>
+
+
+<p>Site Changes (old to new);</p>
+
+<ol class="ulbasic">
+    <li class="libasic">Added the smart quotes back into the content, because they are better typography.  This site is UTF-8 and tagged as such;</li>
+    <li class="libasic">Improve the logging;</li>
+    <li class="libasic">Upgraded the pips on lists with CSS, need to test on a few versions of msie, will fail over to dots;</li>
+    <li class="libasic">Spend about a day minorly adjusting wording; stopping nouns from being “magic words”;</li>
+    <li class="libasic">Redo the “website folder” structure so it reads better (please note not the filesystem);</li>
+    <li class="libasic">Add footers generated via the Wiki libs, but not part of the stored page;</li>
+    <li class="libasic">Auto-generate the TOC indexes at the top from the content, not using Wiki, so other renderers can access the TOC;</li>
+    <li class="libasic">Add minor styling (mostly on the menu at the top);</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Spelcheck [sic] everything again;</li>
+    <li class="libasic">Add a few external pages for CAIN;</li>
+    <li class="libasic">Rebuild .htaccess, the host doesn't like some of my settings;</li>
+    <li class="libasic">Public access, site is now visible;</li>
+    <li class="libasic">Add university work to the site to maintain parity with my CV;</li>
+    <li class="libasic">Add a tiny-url feature;</li>
+    <li class="libasic">Created strapline support (small text below the title);</li>
+    <li class="libasic">Add support for per-resource CSS and JS;</li>
+    <li class="libasic">Create a auto generated site-map resource;</li>
+    <li class="libasic">Adjust the footer again for readability;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Categorise the system pages to accessgroup 1 (so not in site-map);</li>
+    <li class="libasic">Add 'Content-Disposition' headers for binary downloads, msie will work properly now;</li>
+    <li class="libasic">Improve error flowback, so should you somehow break this you are told why it fails;</li>
+    <li class="libasic">The current codebase is to be a new version as soon as I have have time for the paperwork;</li>
+    <li class="libasic">Add more content;</li>
+    <li class="libasic">Re-add constants rather than define()'s, add PHP version constraint fail point;</li>
+    <li class="libasic">Is now 0.2.0, need to upload to host at some point;</li>
+    <li class="libasic">Add more test-cases;</li>
+    <li class="libasic">Confirm and add w3c status.  Do not understand their errors on strict xhtml, there is something about singleton tag they dislike.   This is on my todo list.  Oct 2013: Other people state there may be errors in the w3c validator;</li>
+    <li class="libasic">Accidentally implement language selection before realise this will never be used;</li>
+    <li class="libasic">Assorted error flow-back improvements in light of improved test suites;</li>
+    <li class="libasic">Add more test-cases;</li>
+    <li class="libasic">Split CV into different jobrole focused editions, add more project pages to website aka “Add more content”;</li>
+    <li class="libasic">Add robots.txt and support for robots meta;</li>
+    <li class="libasic">Start to create documentation for platform;</li>
+    <li class="libasic">Use documentation to determine missing test cases, create more;</li>
+    <li class="libasic">Use test cases to determine missing documentation, create more (these two items are abit recursive);</li>
+    <li class="libasic">Add support for additional get args;</li>
+    <li class="libasic">Add a resource source viewer, second edition added to footer;</li>
+    <li class="libasic">Make version checking more useful, ought to upgrade code base version numbering;</li>
+    <li class="libasic">Deploy new version (random fixes as I spot things);</li>
+    <li class="libasic">Add HTML chunk support for random things that don't fit the current libraries;</li>
+    <li class="libasic">Add an alternative mechanism for POST functions when the lack of correct syntax hi-lighting makes it hard to edit;</li>
+    <li class="libasic">Test cases for POST retested, and made more useful;</li>
+    <li class="libasic">Improve rendering on internal page redirects;</li>
+    <li class="libasic">In a separate project, create a source form renderer.  This will imported into iceline at some point;</li>
+    <li class="libasic">Fix a batch of undefs I noticed whilst trying to get my sample for JDI to run;</li>
+    <li class="libasic">Not yet in this project, but add more features to the form renderer in JDI;</li>
+    <li class="libasic">Add alot of CSS &amp; JS for JDI;</li>
+    <li class="libasic">Add more articles;</li>
+    <li class="libasic">The page menus are now run through wiki;</li>
+    <li class="libasic">Adjusted footer, so all the CSS is in the CSS file, rather than verbatum from w3c, add file modified date text;</li>
+    <li class="libasic">Saw site in google listings, updated robots file.  Need a mechanism to down prioritise old contents in my “external” category, those are mostly older than 2004;</li>
+    <li class="libasic">Moved the HTML for the menu to the end of the document, hopefully google listing will be more useful now;</li>
+    <li class="libasic">WikiResource now supports HTML inclusions in the Wiki text, if tagged with '['.'noEscape]' and '['.'/noEscape]' to delimit areas to ignore.  Demonstrated on <a class="" href="http://owenberesford.me.uk/resource/search#">search</a>.  This will be refocused as a multi-format-file-protocol in due time, so it resembles the PNG format (only hand editable);</li>
+    <li class="libasic">Page menu made more useful, it will translate common URL symbols, before rasterisation;</li>
+    <li class="libasic">Add linked-in URL to footer, as a cross media connection;</li>
+    <li class="libasic">I am leaving the dates in the footer as a fairly ISO format as I think this is more useful to purpose.  The primary use case is discovering cached content, and currency of information;</li>
+    <li class="libasic">Adjust resource headers and menu at the top of the page, so it renders better on smaller screen sizes;</li>
+    <li class="libasic">I have wongled enough things so that the nested lists are functioning correctly.  This is a negotiation between the resource source file, and the Wiki library, I haven't added any code myself to manage this;</li>
+    <li class="libasic">Update content again;</li>
+    <li class="libasic">Add 'share' links to the pages;</li>
+    <li class="libasic">Improve error handling on dynamically created code in individual resources;</li>
+    <li class="libasic">File format2 &lt;applause&gt; &lt;parties&gt; &lt;ultra natey impressions&gt; &lt;wild dancing&gt;;</li>
+    <li class="libasic">Host updates to PHP5.4;</li>
+    <li class="libasic">Updated my test population, to run ALL v1.x features. Some stuff previously was rushed;</li>
+    <li class="libasic">Update my docs;</li>
+    <li class="libasic">Add more tests for v2;</li>
+    <li class="libasic">Add more docs for v2;</li>
+    <li class="libasic">&lt;format2 gets published to website here, Jan 2013&gt;;</li>
+    <li class="libasic">Source gets uploaded to source forge;</li>
+    <li class="libasic">Add form chunks to the format2, add more docs, add more tests;</li>
+    <li class="libasic">Add the in-progress flag;</li>
+    <li class="libasic">Add the status meta element;</li>
+    <li class="libasic">Edit content;</li>
+    <li class="libasic">Add select dropdowns as a option for forms;</li>
+    <li class="libasic">Current domain registration expires in March, don't know if I should stick with the same host;</li>
+    <li class="libasic">Improve format2 to allow including extra files;</li>
+    <li class="libasic">Improve format2 to allow “page frames” of relatively static html (i.e. the body element and so on);</li>
+    <li class="libasic">Escape URLs, so tidy says documents are valid UTF8 docs;</li>
+    <li class="libasic">Advisory: never get ill, this breaks all normal performance charts;</li>
+    <li class="libasic">Refactor render.php, to allow a better grade of test cases;</li>
+    <li class="libasic">Lots of small English improvements/ content editing;</li>
+    <li class="libasic">Remove alot of the “short term hack” global variables, <strong>finally</strong>. Add Config class;</li>
+    <li class="libasic">Update docs;</li>
+    <li class="libasic">Test the crash handler under a extra range of failures, make it better;</li>
+    <li class="libasic">Required by the new host, need to patch Text_Wiki into the source tree;</li>
+    <li class="libasic">Add JS test libraries, for other systems although no current use here;</li>
+    <li class="libasic">Make alternatePost a useful feature;</li>
+    <li class="libasic">Add reference db access;</li>
+    <li class="libasic">Improve usefulness of post handling;</li>
+    <li class="libasic">Add much more docs for iceline;</li>
+    <li class="libasic">Audit the creation of the Singleton classes;</li>
+    <li class="libasic">Rewrite the Session class, as different resources require different outcomes.  This should optimise page render times;</li>
+    <li class="libasic">Due to the above, have better caching strategy;</li>
+    <li class="libasic">And again, on content-location header;</li>
+    <li class="libasic">I am pleased that the main “index file” is 100lines, 50% convenience settings &amp; 50% the triggers for the state machine;</li>
+    <li class="libasic">No new articles for the last section, due to time being used on rewrites;</li>
+    <li class="libasic">Re-impl session cleanup.  Suppress /assets/ from the breadcrumbs;</li>
+    <li class="libasic">Add a stack of crash reporters, so it is possible to provide higher levels of information;</li>
+    <li class="libasic">Rewrite the error page, so it reads better;</li>
+    <li class="libasic">Start to add more CSS...</li>
+    <li class="libasic">Improve v1/v2 duplexing;</li>
+    <li class="libasic">Improve error reporting when doing noEscape blocks;</li>
+    <li class="libasic">Pass my ZCE, which is why things have been stalled recently;</li>
+    <li class="libasic">Add quite a few more articles;</li>
+    <li class="libasic">Add table support, v1, via iceline, rather than via wiki;</li>
+    <li class="libasic">Add a better means to build session keys;</li>
+    <li class="libasic">Test a second parser for Text_Wiki in, but it was incompatible with my existing content, so remove again;</li>
+    <li class="libasic">Add abit more JS so window resize works better;</li>
+    <li class="libasic">Add more stability options when using old session keys;</li>
+    <li class="libasic">Manually reapply smart-quotes to resources again;</li>
+    <li class="libasic">Make practical use of [iceline] frames abit more sophisticated;</li>
+    <li class="libasic">Make the renderer apply smart quotes, because the computer does it faster than me;</li>
+    <li class="libasic">More articles;</li>
+    <li class="libasic">Add a recent articles section to the home page;</li>
+    <li class="libasic">Update iceline config docs, which had become stale;</li>
+    <li class="libasic">Improve error reporting in alot of places;</li>
+    <li class="libasic">Add 'protect-csrf' as a option to forms;</li>
+    <li class="libasic">Improve internal logging in alot of the resource rasterisation;</li>
+    <li class="libasic">Rebuild template merging again.  Hopefully last rebuild;</li>
+    <li class="libasic">Add validation rules 'lower' and 'upper' for input validation;</li>
+    <li class="libasic">Add 'email' and 'free_text' base types to the rules lists for input validation;</li>
+    <li class="libasic">Start to add 'placeholder' attribute support for form items (will be supported everywhere in the next actual version);</li>
+    <li class="libasic">POST submission 'used in anger', and has more polish now, in v2. </li>
+    <li class="libasic">Start to add IOInterface stuff;</li>
+    <li class="libasic">Improve classpath mapping (needed for libraries);</li>
+    <li class="libasic">Publish a version to SourceForge;</li>
+    <li class="libasic">Add email support;</li>
+    <li class="libasic">Add the start of IOInterface stuff;</li>
+    <li class="libasic">Create and improve the new reach shell;</li>
+    <li class="libasic">More articles</li>
+    <li class="libasic">Add increasing amounts of ease of use to the menu structures;</li>
+    <li class="libasic">Create FTP script so <em>new</em> content is uploaded to the webhost, this mean the sitemap works better;</li>
+    <li class="libasic">Port everything to the reach shell, so it is easier to read, and more responsive;</li>
+    <li class="libasic">Rebuild <a class="" href="http://owenberesford.me.uk/resource/mirror#">mirror</a> resource, this tests the '*' input validation;</li>
+    <li class="libasic">Make the home resource responsive down to 700px wide under standards compliant webbrowsers;</li>
+    <li class="libasic">The rest of the site is already responsive;</li>
+    <li class="libasic">Make a seperate case for below 700px width.  Please note, my test phones don't use that case;</li>
+    <li class="libasic">Add appearance option, you can now choose the styling on the site...;</li>
+    <li class="libasic">Add columnisation, so it is easier to read;</li>
+    <li class="libasic">Add more resources;</li>
+    <li class="libasic">Add more text imput filters;</li>
+    <li class="libasic">Add another batch of articles;</li>
+    <li class="libasic">Add another demo ~ Symfony MVC;</li>
+    <li class="libasic">Improve columnisation;</li>
+</ol>
+
+</div>
+</div>
+</div>
+<br />
+</div>
+
+<br class="blocker" />
+<div class="h4_footer"> I deleted the footer contents </div>
+</body>
+</html>
