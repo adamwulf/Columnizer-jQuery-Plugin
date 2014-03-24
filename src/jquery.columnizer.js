@@ -5,7 +5,14 @@
 (function($){
 
  $.fn.columnize = function(options) {
-
+	this.cols  =[]; 
+	this.offset= 0; 
+	this.before=[];
+	this.lastOther=0;  
+	this.prevMax =0;
+	this.debug=0; 
+	this.setColumnStart =null;
+	this.elipsisText='';
 
 	var defaults = {
 		// default width of columns
@@ -38,7 +45,9 @@
 		manualBreaks : false,
 		// previx for all the CSS classes used by this plugin
 		// default to empty string for backwards compatibility
-		cssClassPrefix : ""
+		cssClassPrefix : "",
+		elipsisText:'...',
+		debug:0,	
 	};
 	options = $.extend(defaults, options);
 
@@ -48,7 +57,16 @@
 			options.width = defaults.width;
 		}
 	}
-		
+	if(typeof options.setColumnStart== 'function') {
+		this.setColumnStart=options.setColumnStart;
+	}
+	if(typeof options.elipsisText== 'string') {
+		this.elipsisText=options.elipsisText;
+	}
+	if(options.debug) { // assert is off by default
+		this.debug=options.debug;
+	}	
+	
 	/**
 	 * appending a text node to a <table> will
 	 * cause a jquery crash.
@@ -641,4 +659,204 @@
 		}
     });
  };
+
+$.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
+	this.setList = function($cols, $list, $tag1) {
+		var $parents	= this.before.parents();
+		var $rest;
+
+		$rest			= $($cols[this.offset-1]).find('>*');
+
+		if( ($rest.last())[0].tagName!=$tag1.toUpperCase()) {
+			if(this.debug) {
+				console.log("Last item in previous column, isn't a list...");
+			}
+			return 0;
+		}
+		$rest			= $rest.length;
+		var $tint		= 1;
+
+		if(this.lastOther<=0) {
+			$tint		= this.before.children().length+1;
+		} else {
+			$tint		= $($parents[this.lastOther]).children().length+1;
+		}
+		// if the first LI in the current column is split, decrement, as we want the same number/key
+		if( $($cols[this.offset]).find($tag1+':first li.split').length ) {
+			var $whereElipsis=$($cols[this.offset-1]).find($tag1+':last li:last');
+			if( this.elipsisText==='' || 
+				$($cols[this.offset-1]).find($tag1+':last ~ div').length || 
+				$($cols[this.offset-1]).find($tag1+':last ~ p').length  ) {
+				;
+			} else {
+				if($($whereElipsis).find('ul, ol, dl').length ==0 ) {
+
+					var $txt=$whereElipsis.last().text();
+					// char counting, 'cus MSIE 8 is appearently stupid
+					var $len=$txt.length;
+					if($txt.substring($len-1)==';') {
+						if($txt.substring($len-4)!=this.elipsisText+';') {
+							$txt=$txt.substring(0, $len-1)+this.elipsisText+';';
+						}
+					} else {
+						if($txt.substring($len-3)!=this.elipsisText) {
+							$txt+=this.elipsisText;
+						}
+					}
+					$whereElipsis.last().text($txt);
+				}
+			}
+			// an item in split between two columns.  it only holds one key...
+			if($($cols[this.offset]).find($tag1+':first >li.split >'+$tag1).length==0) {
+				$tint--; 
+			}
+		}
+		if($rest==1) {
+			// the last column only held one thing, so assume its wrapped to the column before that as well.
+			$tint		+= this.prevMax ;
+		}
+		if(this.nest>1) {
+			if(this.debug) {
+				console.log("Supposed to be a nested list...decr");
+			}
+			$tint--;
+// some how, id previous list starts split, need  secins decrement, 
+// if "split" is now correct, reference this
+			var $tt		= $($cols[this.offset -1]).find($tag1+':first li.split:first');
+			if($tt.length>0) {
+				if(this.debug) {
+					console.log("Previous column started with a split item, so that count is one less than expected");
+				}
+				$tint--;
+			}
+
+
+			$tt			= $($cols[this.offset]).find($tag1+':first li:first').clone();
+			$tt.children().remove();
+			if( $.trim($tt.text()).length>0 ){
+				if(this.debug) {
+					console.log("If that was a complete list in the previous column, don't decr.");
+				}
+				$tint++;
+
+				if($($cols[this.offset-1]).find(">"+$tag1+':last ').children().length==0 ) {
+					if(this.debug) {
+						console.log("unless that was empty, in which case revert");
+					}
+					$tint--;
+				}
+			}
+
+		} else {
+			var $tt		= $($cols[this.offset]).find($tag1+':first li:first '+$tag1+".split li.split");
+			if($tt.length>0) {
+				if(this.debug) {
+					console.log("[Nested] Column started with a split item, so that count is one less than expected");
+				}
+				$tint--;
+			}
+
+		}
+
+		if(this.debug) {
+			console.log("Setting the start value to "+$tint+" ("+this.prevMax +")");
+		}
+		if($tint >0) {
+			// if the above computation leads to 0, or an empty list (more likely), don't set, leave as 1
+			if(typeof this.setColumnStart == 'function') {
+				this.setColumnStart($list, $tint);
+			} else {
+				$list.attr('start', $tint);
+			}
+		}
+		return 0; 
+	}
+
+	if(typeof $targetId === 'undefined') { $targetId=false; }
+	if(typeof $targetClass === 'undefined') { $targetClass=false; }
+	if(! $targetId && !$targetClass ) {
+		throw "renumberByJS(): Bad param, must pass an id or a class";
+	}
+
+	var $target 			='';
+	this.prevMax			=1;
+	
+	if($targetClass) {
+		$target 			="."+$targetClass;
+	} else {
+		$target 			="#"+$targetId;
+	}
+	var $tag1				= $searchTag.toLowerCase();
+	var $tag2				= $searchTag.toUpperCase();
+	
+	this.cols  				= $($target);
+	if(this.debug) {
+		console.log("There are "+this.cols.length+" items, looking for "+$tag1);
+	}
+
+	this.before				= $(this.cols[0]).find($tag1+':last');
+	this.prevMax			= this.before.children().length;
+
+// start at 1, as must compare to previous...
+	for(this.offset=1; this.offset<this.cols.length; this.offset++) {
+		if(this.debug) {
+			console.log("iterating "+this.offset+"...[of "+this.cols.length+"]");
+		}
+// if the first column again, nothing to the left of you, do nothing...
+		if(this.offset % $colno==0) { 
+			if(this.debug) {
+				console.log("First column (in theory..)");
+			}
+
+			this.prevMax	= 1;
+			continue;
+		}
+		
+		this.before			= $(this.cols[this.offset-1]).find($tag1+':last');
+// if there are no occurences of the searchTag, do nothing
+		if(this.before.length) {
+			if(this.debug) {
+				console.log("Have some "+$searchTag+" elements in the previous column");
+			}
+
+			var $list		= $(this.cols[this.offset]).find($tag1+':first');
+			var $first		= $(this.cols[this.offset]).find('*:first');
+			if($first[0] !== $list[0]) {
+// don't renumber anything, its not a rollover list
+				continue;
+			}
+
+			var $parents	= this.before.parents();
+			this.lastOther	= 0;
+			var $found		= false;
+			for(; this.lastOther<$parents.length; this.lastOther++) {
+				if($parents[this.lastOther].tagName != $tag2 && $parents[this.lastOther].tagName != "LI") {
+					$found  = true;
+					this.lastOther--;
+					break;
+				}
+			}
+			
+			this.nest		=1;
+			if($(this.cols[this.offset]).find(">"+$tag1+':first li '+$tag1+":first").length) {
+				this.nest	= 2;
+			}
+			this.setList(this.cols, $list, $tag1);
+			this.lastOther--;
+			$list			= $(this.cols[this.offset]).find($tag1+':first li '+$tag1+":first");
+			if($list.length) {
+// I hope the two columns have same nesting, or its busted
+				
+				this.before= $(this.cols[this.offset-1]).find(">"+$tag1+':last li '+$tag1+":last");
+				this.prevMax= 0;
+				this.nest	=1;
+				this.setList(this.cols, $list, $tag1);
+			}
+			var $reset		= $(this.cols[this.offset-1]).find(">"+$tag1+':last');
+			this.prevMax	= $reset.children().length;
+		}
+	}
+	return 0;
+};
+
 })(jQuery);
