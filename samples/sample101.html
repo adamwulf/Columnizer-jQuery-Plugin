@@ -15,12 +15,8 @@
 <meta name="Author" content="Owen Beresford" />
 <meta name="Description" content="This is list of things at I have changed in this site" />
 
-<link rel="stylesheet" type="text/css" href="/resource/reach-positional" />
-<link rel="stylesheet" type="text/css" href="/asset/qunit-1.11.0.css" />
-
-<script type="text/javascript" src="/asset/jquery-1.10.2" ></script>
-<script type="text/javascript" src="/asset/jquery.columnizer"></script>
-<script type="text/javascript" src="/asset/qunit-1.11.0.js"></script>
+<script type="text/javascript" src="../src/jquery.js" ></script>
+<script type="text/javascript" src="../src/jquery.columnizer.js"></script>
 <script type="text/javascript" >
 var $ice={ 
 		last:0, 
@@ -74,21 +70,8 @@ var $ice_col=function() {
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/grouping-content.html#attr-ol-start
 }; 
 
-var $spawn=function() {	
-
-	var $id=666;
-	window.open(location.protocol+'//'+location.hostname+"/external/c2.html?no=1", $id++, 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=0,width=800,height=600');
-	window.open(location.protocol+'//'+location.hostname+"/external/c2.html?no=2", $id++, 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=0,width=1201,height=600');
-	window.open(location.protocol+'//'+location.hostname+"/external/c3.html?no=1", $id++, 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=0,width=800,height=600');
-	window.open(location.protocol+'//'+location.hostname+"/external/c3.html?no=2", $id++, 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=0,width=1201,height=600');
-	alert("Im pausing here, check they all worked...");
-	return 0;
-}
-
-
 if(jQuery) {
 	$(document).ready($ice_col);
-	$(document).ready($spawn);
 }
 
 </script>
