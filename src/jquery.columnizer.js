@@ -1,6 +1,8 @@
-// version 1.6.0
-// http://welcome.totheinter.net/columnizer-jquery-plugin/
-// created by: Adam Wulf @adamwulf, adam.wulf@gmail.com
+/*!
+ jQuery.columnizer plugin, version 1.6.0
+ http://welcome.totheinter.net/columnizer-jquery-plugin/
+ created by: Adam Wulf @adamwulf, adam.wulf@gmail.com
+*/
 
 (function($){
 
@@ -35,6 +37,10 @@
 		ignoreImageLoading : true,
 		// should columns float left or right
 		columnFloat : "left",
+		// allow last column to be shorter than the rest
+		// this relaxes the columnizer algorithm a bit, to allow correct solution,
+		// when there are long 'dontsplit' blocks.
+		lastCanBeLowest : false,
 		// ensure the last column is never the tallest column
 		lastNeverTallest : false,
 		// (int) the minimum number of characters to jump when splitting
@@ -604,6 +610,10 @@
 					if(totalH === 0){
 						//
 						// all columns end in a column break,
+						// so we're done here
+						loopCount = maxLoops;
+					else if(options.lastCanBeLowest && lastIsMin){
+						// lastColumn is allowed to be shorter than others
 						// so we're done here
 						loopCount = maxLoops;
 					}else if(options.lastNeverTallest && lastIsMax){
