@@ -391,7 +391,7 @@
 			if(options.overflow && options.overflow.doneFunc){
 				options.overflow.doneFunc();
 			}
-
+			options.doneFunc();
 		}
 
 		/**
