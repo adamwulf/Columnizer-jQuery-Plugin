@@ -19,6 +19,9 @@
 		width: 400,
 		// optional # of columns instead of width
 		columns : false,
+		// Optional, The width of a column can grow to maxColWidth (padding included!).
+		// Columns will be added if the the container is wider
+		maxColWidth:false,
 		// true to build columns once regardless of window resize
 		// false to rebuild when content box changes bounds
 		buildOnce : false,
@@ -432,6 +435,13 @@
 			if(manualBreaks){
 				numCols = $cache.find(prefixTheClassName("columnbreak", true)).length + 1;
 				optionWidth = false;
+			}
+			
+			if ( options.maxColWidth ){
+				numCols=1;
+				while ( ( numCols  * options.maxColWidth ) < $inBox.width() ) {
+				++numCols;
+				}
 			}
 
 //			if ($inBox.data("columnized") && numCols == $inBox.children().length) {
