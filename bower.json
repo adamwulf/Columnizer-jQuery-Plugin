@@ -9,7 +9,7 @@
         "tools",
         "src/jquery.js",
         "compress.sh"
-    ]
+    ],
     "dependecies": {
         "jquery": ">= 1.10.0"
     }
