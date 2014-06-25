@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Columnizer JQuery Plugin sample page 3</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Matt Wilson">
+	<!-- Date: 2008-07-12 -->
+	<style>
+		html, body { 
+			font-size: 16px;
+			width: 100%;
+		}
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+		}
+		.navbar-nav {
+			padding: 0;
+			list-style: none;
+		}
+		.navbar-nav.top-level > .column > li + li {
+			margin-top: 20px;
+		}
+		.navbar-nav.top-level > .column > li > a {
+			font-weight: bold;
+		}
+		a {
+			text-decoration: none;
+			padding: 10px 0;
+			color: inherit;
+			display: block;
+		}
+		.container:after,
+		.container:before {
+			content: " ";
+			display: table;
+			clear: both;
+		}
+	</style>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script src="../src/jquery.columnizer.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		$(function(){
+			$('#default-sample > .navbar-nav.top-level').columnize({
+				columns: 2,
+				allowLongDontSplit: false
+			});
+
+			$('#allow-longdontsplit > .navbar-nav.top-level').columnize({
+				columns: 2,
+				allowLongDontSplit: true
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id="default-sample" class="container">
+		<h2>Rendering example without `allowLongDontSplit`</h2>
+		<p>Columnizer not able to handle such case correctly, as a result - no columns</p>
+		<ul class="navbar-nav top-level">
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<div id="allow-longdontsplit" class="container">
+		<h2>Rendering example with `allowLongDontSplit`</h2>
+		<ul class="navbar-nav top-level">
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dontsplit">
+				<a href="#">Menu section header</a>
+
+				<ul class="navbar-nav">
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+					<li class="dontsplit">
+						<a href="#">sub-entry</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>
