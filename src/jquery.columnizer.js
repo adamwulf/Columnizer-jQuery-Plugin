@@ -41,6 +41,9 @@
 		// text nodes. smaller numbers will result in higher accuracy
 		// column widths, but will take slightly longer
 		accuracy : false,
+		// false to round down column widths (for compatibility)
+		// true to conserve all decimals in the column widths
+		precise : false,
 		// don't automatically layout columns, only use manual columnbreak
 		manualBreaks : false,
 		// previx for all the CSS classes used by this plugin
@@ -65,7 +68,18 @@
 	}
 	if(options.debug) { // assert is off by default
 		this.debug=options.debug;
-	}	
+	}
+	if(!options.setWidth) {
+		if (options.precise) {
+			options.setWidth = function (numCols) {
+				return 100 / numCols;
+			};
+		} else {
+			options.setWidth = function (numCols) {
+				return Math.floor(100 / numCols);
+			};
+		}
+	}
 	
 	/**
 	 * appending a text node to a <table> will
@@ -445,7 +459,7 @@
 			$inBox.data("columnizing", true);
 
 			$inBox.empty();
-			$inBox.append($("<div style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
+			$inBox.append($("<div style='width:" + options.setWidth(numCols) + "%; float: " + options.columnFloat + ";'></div>")); //"
 			$col = $inBox.children(":last");
 			appendSafe($col, $cache.clone());
 			maxHeight = $col.height();
@@ -488,7 +502,7 @@
 					className = (i === 0) ? prefixTheClassName("first") : "";
 					className += " " + prefixTheClassName("column");
 					className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
-					$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
+					$inBox.append($("<div class='" + className + "' style='width:" + options.setWidth(numCols) + "%; float: " + options.columnFloat + ";'></div>")); //"
 				}
 
 				// fill all but the last column (unless overflowing)
@@ -496,7 +510,7 @@
 				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.contents().length){
 					if($inBox.children().length <= i){
 						// we ran out of columns, make another
-						$inBox.append($("<div class='" + className + "' style='width:" + (Math.floor(100 / numCols))+ "%; float: " + options.columnFloat + ";'></div>")); //"
+						$inBox.append($("<div class='" + className + "' style='width:" + options.setWidth(numCols) + "%; float: " + options.columnFloat + ";'></div>")); //"
 					}
 					$col = $inBox.children().eq(i);
 					if(scrollHorizontally){
