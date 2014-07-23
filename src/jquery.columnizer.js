@@ -50,7 +50,7 @@
 		// default to empty string for backwards compatibility
 		cssClassPrefix : "",
 		elipsisText:'...',
-		debug:0,	
+		debug:0
 	};
 	options = $.extend(defaults, options);
 
