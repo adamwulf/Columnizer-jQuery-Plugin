@@ -1,5 +1,5 @@
 {
-    "name": "columnizer-jquery-plugin",
+    "name": "jquery.columnizer",
     "version": "1.6.2",
     "description": "Automatically layout your content in newspaper column format. Specify column width or a static number of columns.",
     "main": "src/jquery.columnizer.js",
