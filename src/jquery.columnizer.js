@@ -343,7 +343,20 @@
 							// it was split, but nothing is in it :(
 							$clone.remove();
 							$cloneMe.removeClass(prefixTheClassName("split"));
-						}
+						}else if($clone.get(0).childNodes.length == 1){
+                            // was the only child node a text node w/ whitespace?
+                            var onlyNode = $clone.get(0).childNodes[0];
+                            if(onlyNode.nodeType == 3){
+                                // text node
+                                var whitespace = /\s/;
+                                var str = onlyNode.nodeValue;
+                                if(whitespace.test(str)){
+                                    // yep, only a whitespace textnode
+                                    $clone.remove();
+									$cloneMe.removeClass(prefixTheClassName("split"));
+                                }
+                            }
+                        }
 					}
 				}
 			}
