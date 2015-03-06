@@ -205,6 +205,27 @@
 			$putInHere[0].removeChild(lastKid);
 			var $item = $(lastKid);
 
+			var didPullOutDontEnd = false;
+			do{
+				didPullOutDontEnd = false;
+				if($putInHere[0].childNodes.length){
+					var lastKid = kids[kids.length-1];
+					if(checkDontEndColumn(lastKid)){
+						// re-add the item to the column
+						if($pullOutHere.contents().length){
+							$pullOutHere.prepend($item);
+						}else{
+							appendSafe($pullOutHere, $item);
+						}
+						// set the new ending item to be this dontend item
+						$putInHere[0].removeChild(lastKid);
+						$item = $(lastKid);
+						didPullOutDontEnd = true;
+					}
+				}
+			}while(didPullOutDontEnd);
+			
+
 			// now lets try to split that last node
 			// to fit as much of it as we can into this column
 			if($item[0].nodeType == 3){
