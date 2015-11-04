@@ -678,7 +678,7 @@
 					});
 					$inBox.width($inBox.children().length * optionWidth + "px");
 				}
-				$inBox.append($("<br style='clear:both;'>"));
+				$inBox.append($("<div class='" + cssClassClear + "' />"));
 			}
 			$inBox.find(prefixTheClassName(cssClassCol, true)).find(":first" + prefixTheClassName("removeiffirst", true)).remove();
 			$inBox.find(prefixTheClassName(cssClassCol, true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
