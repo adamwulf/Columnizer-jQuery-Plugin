@@ -49,6 +49,8 @@
 		// previx for all the CSS classes used by this plugin
 		// default to empty string for backwards compatibility
 		cssClassPrefix : "",
+		cssClassClear : "clear",
+		cssClassCol : "column",
 		elipsisText:'...',
 		debug:0
 	};
@@ -96,19 +98,25 @@
 	}
 
     return this.each(function() {
-		var $inBox = options.target ? $(options.target) : $(this);
-		var maxHeight = $(this).height();
-		var $cache = $('<div></div>'); // this is where we'll put the real content
-		var lastWidth = 0;
-		var columnizing = false;
-		var manualBreaks = options.manualBreaks;
-		var cssClassPrefix = defaults.cssClassPrefix;
+		var $inBox = options.target ? $(options.target) : $(this),
+			maxHeight = $(this).height(),
+			$cache = $('<div></div>'), // this is where we'll put the real content
+			lastWidth = adjustment = 0,
+			columnizing = false,
+			manualBreaks = options.manualBreaks,
+			cssClassPrefix = defaults.cssClassPrefix,
+			cssClassClear = defaults.cssClassClear,
+			cssClassCol = defaults.cssClassCol;
+			
 		if(typeof(options.cssClassPrefix) == "string"){
 			cssClassPrefix = options.cssClassPrefix;
 		}
-
-
-		var adjustment = 0;
+		if(typeof(options.cssClassClear) == "string"){
+			cssClassClear = options.cssClassClear;
+		}
+		if(typeof(options.cssClassCol) == "string"){
+			cssClassCol = options.cssClassCol;
+		}
 
 		appendSafe($cache, $(this).contents().clone(true));
 
@@ -136,7 +144,7 @@
 			}
 		}
 
-		$inBox.empty();
+		$inBox.empty().addClass('columnized');
 
 		columnizeIt();
 
@@ -200,8 +208,8 @@
 			if($putInHere[0].childNodes.length === 0) return;
 
 			// now we're too tall, so undo the last one
-			var kids = $putInHere[0].childNodes;
-			var lastKid = kids[kids.length-1];
+			var kids = $putInHere[0].childNodes,
+				lastKid = kids[kids.length-1];
 			$putInHere[0].removeChild(lastKid);
 			var $item = $(lastKid);
 
@@ -209,12 +217,13 @@
 			// to fit as much of it as we can into this column
 			if($item[0].nodeType == 3){
 				// it's a text node, split it up
-				var oText = $item[0].nodeValue;
-				var counter2 = options.width / 18;
-				if(options.accuracy)
-				counter2 = options.accuracy;
-				var columnText;
-				var latestTextNode = null;
+				var oText = $item[0].nodeValue,
+					counter2 = options.width / 18,
+					columnText,
+					latestTextNode = null;
+					
+				if(options.accuracy) counter2 = options.accuracy;
+				
 				while($parentColumn.height() < targetHeight && oText.length){
 					//
 					// it's been brought up that this won't work for chinese
@@ -374,8 +383,8 @@
 			$inBox.append($("<div class='"
 				+ prefixTheClassName("first") + " "
 				+ prefixTheClassName("last") + " "
-				+ prefixTheClassName("column") + " "
-				+ "' style='width:100%; float: " + options.columnFloat + ";'></div>")); //"
+				+ prefixTheClassName(cssClassCol) + " "
+				+ "'></div>")); //"
 			$col = $inBox.children().eq($inBox.children().length-1);
 			$destroyable = $cache.clone(true);
 			if(options.overflow){
@@ -392,8 +401,8 @@
 					$destroyable.prepend($lastKid);
 				}
 
-				var html = "";
-				var div = document.createElement('DIV');
+				var html = "",
+					div = document.createElement('DIV');
 				while($destroyable[0].childNodes.length > 0){
 					var kid = $destroyable[0].childNodes[0];
 					if(kid.attributes){
@@ -478,10 +487,10 @@
 			maxHeight = $col.height();
 			$inBox.empty();
 
-			var targetHeight = maxHeight / numCols;
-			var firstTime = true;
-			var maxLoops = 3;
-			var scrollHorizontally = false;
+			var targetHeight = maxHeight / numCols,
+				firstTime = true,
+				maxLoops = 3,
+				scrollHorizontally = false;
 			if(options.overflow){
 				maxLoops = 1;
 				targetHeight = options.overflow.height;
@@ -513,9 +522,9 @@
 				for (var i = 0; i < numCols; i++) {
 					/* create column */
 					className = (i === 0) ? prefixTheClassName("first") : "";
-					className += " " + prefixTheClassName("column");
+					className += (className != "" ? " " : "") + prefixTheClassName(cssClassCol);
 					className = (i == numCols - 1) ? (prefixTheClassName("last") + " " + className) : className;
-					$inBox.append($("<div class='" + className + "' style='width:" + options.setWidth(numCols) + "%; float: " + options.columnFloat + ";'></div>")); //"
+					$inBox.append($("<div class='" + className + "'></div>")); //"
 				}
 
 				// fill all but the last column (unless overflowing)
@@ -523,7 +532,7 @@
 				while(i < numCols - (options.overflow ? 0 : 1) || scrollHorizontally && $destroyable.contents().length){
 					if($inBox.children().length <= i){
 						// we ran out of columns, make another
-						$inBox.append($("<div class='" + className + "' style='width:" + options.setWidth(numCols) + "%; float: " + options.columnFloat + ";'></div>")); //"
+						$inBox.append($("<div class='" + className + "'></div>")); //"
 					}
 					$col = $inBox.children().eq(i);
 					if(scrollHorizontally){
@@ -579,8 +588,8 @@
 					@*/
 					var IE7 = (document.all) && (navigator.appVersion.indexOf("MSIE 7.") != -1);
 					if(IE6 || IE7){
-						var html = "";
-						var div = document.createElement('DIV');
+						var html = "",
+							div = document.createElement('DIV');
 						while($destroyable[0].childNodes.length > 0){
 							var kid = $destroyable[0].childNodes[0];
 							for(i=0;i<kid.attributes.length;i++){
@@ -603,13 +612,11 @@
 					$destroyable.contents().each( function() {
 						$col.append( $(this) );
 					});
-					var afterH = $col.height();
-					var diff = afterH - targetHeight;
-					var totalH = 0;
-					var min = 10000000;
-					var max = 0;
-					var lastIsMax = false;
-					var numberOfColumnsThatDontEndInAColumnBreak = 0;
+					var afterH = $col.height(),
+						diff = afterH - targetHeight,
+						min = 10000000,
+						totalH = max = numberOfColumnsThatDontEndInAColumnBreak = 0,
+						lastIsMax = false;
 					$inBox.children().each(function($inBox){ return function($item){
 						var $col = $inBox.children().eq($item);
 						var endsInBreak = $col.children(":last").find(prefixTheClassName("columnbreak", true)).length;
@@ -673,8 +680,8 @@
 				}
 				$inBox.append($("<br style='clear:both;'>"));
 			}
-			$inBox.find(prefixTheClassName("column", true)).find(":first" + prefixTheClassName("removeiffirst", true)).remove();
-			$inBox.find(prefixTheClassName("column", true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
+			$inBox.find(prefixTheClassName(cssClassCol, true)).find(":first" + prefixTheClassName("removeiffirst", true)).remove();
+			$inBox.find(prefixTheClassName(cssClassCol, true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
 			$inBox.find(prefixTheClassName("split", true)).find(":first" + prefixTheClassName("removeiffirst", true)).remove();
 			$inBox.find(prefixTheClassName("split", true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
 			$inBox.data("columnizing", false);
