@@ -348,9 +348,9 @@
                             var onlyNode = $clone.get(0).childNodes[0];
                             if(onlyNode.nodeType == 3){
                                 // text node
-                                var whitespace = /\s/;
+                                var nonwhitespace = /\S/;
                                 var str = onlyNode.nodeValue;
-                                if(whitespace.test(str)){
+                                if(!nonwhitespace.test(str)){
                                     // yep, only a whitespace textnode
                                     $clone.remove();
 									$cloneMe.removeClass(prefixTheClassName("split"));
