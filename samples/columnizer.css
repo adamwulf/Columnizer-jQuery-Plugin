@@ -1,0 +1,9 @@
+.columnized .column {
+	width: 24%;
+	float: left;
+	margin: 0 .5%;
+}
+
+.clear {
+	clear: both;
+}
