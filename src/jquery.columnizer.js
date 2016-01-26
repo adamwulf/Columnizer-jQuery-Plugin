@@ -3,14 +3,21 @@
 // created by: Adam Wulf @adamwulf, adam.wulf@gmail.com
 
 (function($){
+    var DATA_ORIGINAL_DOM_KEY = 'columnizer-original-dom';
 
  $.fn.columnize = function(options) {
-	this.cols  =[]; 
-	this.offset= 0; 
+    // save original DOM clone as data
+    this.each(function() {
+        var $el = $(this);
+        $el.data(DATA_ORIGINAL_DOM_KEY, $el.clone(true, true));
+    });
+
+	this.cols  =[];
+	this.offset= 0;
 	this.before=[];
-	this.lastOther=0;  
+	this.lastOther=0;
 	this.prevMax =0;
-	this.debug=0; 
+	this.debug=0;
 	this.setColumnStart =null;
 	this.elipsisText='';
 
@@ -27,7 +34,7 @@
 		overflow : false,
 		// this function is called after content is columnized
 		doneFunc : function(){},
-		// if the content should be columnized into a 
+		// if the content should be columnized into a
 		// container node other than it's own node
 		target : false,
 		// re-columnizing when images reload might make things
@@ -80,7 +87,7 @@
 			};
 		}
 	}
-	
+
 	/**
 	 * appending a text node to a <table> will
 	 * cause a jquery crash.
@@ -165,7 +172,7 @@
 		 * is a text node, then it will try to split that text node. otherwise
 		 * it will leave the node in $pullOutHere and return with a height
 		 * smaller than targetHeight.
-		 * 
+		 *
          * Returns a boolean on whether we did some splitting successfully at a text point
          * (so we know we don't need to split a real element). return false if the caller should
          * split a node if possible to end this column.
@@ -260,7 +267,7 @@
 		}
 
 		/**
-		 * Split up an element, which is more complex than splitting text. We need to create 
+		 * Split up an element, which is more complex than splitting text. We need to create
 		 * two copies of the element with it's contents divided between each
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
@@ -311,7 +318,7 @@
 					}else if($clone.is("img") || $cloneMe.hasClass(prefixTheClassName("dontsplit"))){
 						//
 						// it's either an image that's too tall, or an unsplittable node
-						// that's too tall. leave it in the pullOutHere and we'll add it to the 
+						// that's too tall. leave it in the pullOutHere and we'll add it to the
 						// next column
 						$clone.remove();
 					}else{
@@ -324,13 +331,13 @@
 							// this node may still have non-text nodes to split
 							// add the split class and then recur
 							$cloneMe.addClass(prefixTheClassName("split"));
-							
+
 							//if this node was ol element, the child should continue the number ordering
 							if($cloneMe.get(0).tagName == 'OL'){
 								var startWith = $clone.get(0).childElementCount + $clone.get(0).start;
 								$cloneMe.attr('start',startWith+1);
 							}
-							
+
 							if($cloneMe.children().length){
 								split($clone, $cloneMe, $parentColumn, targetHeight);
 							}
@@ -492,7 +499,7 @@
 			}
 
 			//
-			// We loop as we try and workout a good height to use. We know it initially as an average 
+			// We loop as we try and workout a good height to use. We know it initially as an average
 			// but if the last column is higher than the first ones (which can happen, depending on split
 			// points) we need to raise 'adjustment'. We try this over a few iterations until we're 'solid'.
 			//
@@ -572,7 +579,7 @@
 				}
 				if(options.overflow && !scrollHorizontally){
 					var IE6 = false;
-					/*@cc_on 
+					/*@cc_on
 					@if (@_jscript_version < 5.7)
 						IE6 = true;
 					@end
@@ -687,6 +694,18 @@
     });
  };
 
+$.fn.uncolumnize = function() {
+    // revert to initial DOM
+    this.each(function() {
+        var $el = $(this),
+            $clone;
+
+        if($clone = $el.data(DATA_ORIGINAL_DOM_KEY)) {
+            $el.replaceWith($clone);
+        }
+    });
+};
+
 $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 	this.setList = function($cols, $list, $tag1) {
 		var $parents	= this.before.parents();
@@ -711,8 +730,8 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 		// if the first LI in the current column is split, decrement, as we want the same number/key
 		if( $($cols[this.offset]).find($tag1+':first li.split').length ) {
 			var $whereElipsis=$($cols[this.offset-1]).find($tag1+':last li:last');
-			if( this.elipsisText==='' || 
-				$($cols[this.offset-1]).find($tag1+':last ~ div').length || 
+			if( this.elipsisText==='' ||
+				$($cols[this.offset-1]).find($tag1+':last ~ div').length ||
 				$($cols[this.offset-1]).find($tag1+':last ~ p').length  ) {
 				;
 			} else {
@@ -735,7 +754,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 			}
 			// an item in split between two columns.  it only holds one key...
 			if($($cols[this.offset]).find($tag1+':first >li.split >'+$tag1).length==0) {
-				$tint--; 
+				$tint--;
 			}
 		}
 		if($rest==1) {
@@ -747,7 +766,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 				console.log("Supposed to be a nested list...decr");
 			}
 			$tint--;
-// some how, id previous list starts split, need  secins decrement, 
+// some how, id previous list starts split, need  secins decrement,
 // if "split" is now correct, reference this
 			var $tt		= $($cols[this.offset -1]).find($tag1+':first li.split:first');
 			if($tt.length>0) {
@@ -796,7 +815,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 				$list.attr('start', $tint);
 			}
 		}
-		return 0; 
+		return 0;
 	}
 
 	if(typeof $targetId === 'undefined') { $targetId=false; }
@@ -807,7 +826,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 
 	var $target 			='';
 	this.prevMax			=1;
-	
+
 	if($targetClass) {
 		$target 			="."+$targetClass;
 	} else {
@@ -815,7 +834,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 	}
 	var $tag1				= $searchTag.toLowerCase();
 	var $tag2				= $searchTag.toUpperCase();
-	
+
 	this.cols  				= $($target);
 	if(this.debug) {
 		console.log("There are "+this.cols.length+" items, looking for "+$tag1);
@@ -830,7 +849,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 			console.log("iterating "+this.offset+"...[of "+this.cols.length+"]");
 		}
 // if the first column again, nothing to the left of you, do nothing...
-		if(this.offset % $colno==0) { 
+		if(this.offset % $colno==0) {
 			if(this.debug) {
 				console.log("First column (in theory..)");
 			}
@@ -838,7 +857,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 			this.prevMax	= 1;
 			continue;
 		}
-		
+
 		this.before			= $(this.cols[this.offset-1]).find($tag1+':last');
 // if there are no occurences of the searchTag, do nothing
 		if(this.before.length) {
@@ -863,7 +882,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 					break;
 				}
 			}
-			
+
 			this.nest		=1;
 			if($(this.cols[this.offset]).find(">"+$tag1+':first li '+$tag1+":first").length) {
 				this.nest	= 2;
@@ -873,7 +892,7 @@ $.fn.renumberByJS=function($searchTag, $colno, $targetId, $targetClass ) {
 			$list			= $(this.cols[this.offset]).find($tag1+':first li '+$tag1+":first");
 			if($list.length) {
 // I hope the two columns have same nesting, or its busted
-				
+
 				this.before= $(this.cols[this.offset-1]).find(">"+$tag1+':last li '+$tag1+":last");
 				this.prevMax= 0;
 				this.nest	=1;
