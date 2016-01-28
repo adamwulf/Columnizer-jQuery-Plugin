@@ -119,6 +119,11 @@ Columnizer does not add default "dontsplit" or "dontend" classes to your content
      $yourContent.find('h1, h2, h3, h4, h5, h6').addClass('dontend');
      $yourContent.find('br').addClass('removeiflast').addClass('removeiffirst');
 
+### Uncolumnize
+
+You can revert your columnized DOM by using the "uncolumnize" function.
+
+    $('selector').uncolumnize();
 
 ## Troubleshooting
 
