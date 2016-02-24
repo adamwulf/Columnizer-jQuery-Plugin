@@ -1,0 +1,24 @@
+{
+  "name": "jquery.columnizer",
+  "version": "1.6.3",
+  "description": "Automatically layout your content in newspaper column format. Specify column width or a static number of columns.",
+  "main": "src/jquery.columnizer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamwulf/Columnizer-jQuery-Plugin.git"
+  },
+  "keywords": [
+    "jquery",
+    "layout",
+    "column"
+  ],
+  "author": "Adam Wulf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adamwulf/Columnizer-jQuery-Plugin/issues"
+  },
+  "homepage": "https://github.com/adamwulf/Columnizer-jQuery-Plugin#readme"
+}
