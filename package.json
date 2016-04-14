@@ -15,7 +15,8 @@
     "columns",
     "columnizer",
     "text",
-    "layout"
+    "layout",
+    "jquery-plugin"
   ],
   "author": "Adam Wulf",
   "license": "SEE LICENSE IN LICENSE",
