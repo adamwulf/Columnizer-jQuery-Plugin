@@ -67,6 +67,12 @@ Columnizer will add CSS classes to the columns it creates. Each column will have
 <td style="text-align: right; padding-right: 10px;"><em>manualBreaks</em></td>
 <td style="padding-left: 10px;">Defaults to false. Set to true if you only want to create columns with manual column breaks. If true, then width, height, columns options are ignored.</td>
 </tr>
+<tr>
+<td style="text-align: right; padding-right: 10px;"><em>disableSingle</em></td>
+<td style="padding-left: 10px;">
+Disables single column layout if number of columns is less or equal to 1. Useful to force columns scrolling horizontally on small screens. See <a href="http://welcome.totheinter.net/autocolumn/sample5.html">demo 5</a> for an example.</td>. Default is false.
+</td>
+</tr>
 </tbody>
 </table>
 
