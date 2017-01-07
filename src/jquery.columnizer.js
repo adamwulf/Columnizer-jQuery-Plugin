@@ -53,6 +53,9 @@
 		precise : false,
 		// don't automatically layout columns, only use manual columnbreak
 		manualBreaks : false,
+    // disable single column layout when container width < columnWidth
+    // (useful for horizontally scrollable columns in mobile view)
+    disableSingle : false,
 		// previx for all the CSS classes used by this plugin
 		// default to empty string for backwards compatibility
 		cssClassPrefix : "",
@@ -471,7 +474,7 @@
 //			if ($inBox.data("columnized") && numCols == $inBox.children().length) {
 //				return;
 //			}
-			if(numCols <= 1){
+			if(numCols <= 1 && ! options.disableSingle){
 				return singleColumnizeIt();
 			}
 			if($inBox.data("columnizing")) return;
