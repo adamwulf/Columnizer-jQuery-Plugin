@@ -186,6 +186,12 @@
 		 * @param targetHeight, the ideal height for the column, get as close as we can to this height
 		 */
 		function columnize($putInHere, $pullOutHere, $parentColumn, targetHeight){
+			
+        		// Variables for dealing with <thead> and <tfoot> when splitting tables
+            		// As we split a table we need to keep copies of the <thead> and <tfoot> to place on each column
+            		var $thead;
+            		var $tfoot;
+
 			//
 			// add as many nodes to the column as we can,
 			// but stop once our height is too tall
@@ -205,6 +211,25 @@
 					// our column is on a column break, so just end here
 					return;
 				}
+				
+				// If we enter a <table> element make a copy of <thead> and <tfoot>
+                		// to use each time the <table> splits
+                		if (node.nodeName=='TABLE'){
+                    			// Check if the table has a header and clone it
+                    			if ($(node).find('thead').length>0){
+                        			this.$thead = $(node).find('thead').clone();
+                    			} else {
+                        			this.$thead = undefined;
+                    			}
+                    			// Check if the table has a footer and clone it
+                    			if ($(node).find('tfoot').length>0){
+                        			this.$tfoot = $(node).find('tfoot').clone();
+                    			} else {
+                        			this.$tfoot = undefined;
+                    			}
+                		}
+
+				
 				appendSafe($putInHere, $(node));
 			}
 			if($putInHere[0].childNodes.length === 0) return;
@@ -370,6 +395,17 @@
 					}
 				}
 			}
+			// If we are in the process of splitting a table, add the <thead> and <tfoot>
+            		// clones back to $pullOutHere so they are available to move into the next column
+            		if($pullOutHere.prop('tagName') == 'TABLE'){
+                		if (this.$thead){
+                    			$pullOutHere.prepend(this.$tfoot);
+                		}
+                		if (this.$thead) {
+                    			$pullOutHere.prepend(this.$thead);
+                		}
+            		}
+
 		}
 
 
