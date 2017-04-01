@@ -268,24 +268,6 @@
 					return;
 				}
 				
-				// If we enter a <table> element make a copy of <thead> and <tfoot>
-                		// to use each time the <table> splits
-                		if (node.nodeName=='TABLE'){
-                    			// Check if the table has a header and clone it
-                    			if ($(node).find('thead').length>0){
-                        			this.$thead = $(node).find('thead').clone();
-                    			} else {
-                        			this.$thead = undefined;
-                    			}
-                    			// Check if the table has a footer and clone it
-                    			if ($(node).find('tfoot').length>0){
-                        			this.$tfoot = $(node).find('tfoot').clone();
-                    			} else {
-                        			this.$tfoot = undefined;
-                    			}
-                		}
-
-				
 				appendSafe($putInHere, $(node));
 			}
 			if($putInHere[0].childNodes.length === 0) return;
