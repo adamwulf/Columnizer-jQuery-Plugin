@@ -64,6 +64,67 @@
 	};
 	options = $.extend(defaults, options);
 
+	// Variable array for holding <thead> and <tfoot> from each table
+	// As we split a table we need to keep copies of the <thead> and <tfoot> to place on each column
+	var tables = new Array();
+
+	// Find all the table elements in the page
+	$('table').each(function () {
+		// Check if we have not already saved the <thead> and <tfoot>
+		if (!$(this).hasClass('tableSaved')) {
+			// Mark the found table by adding the .tableSaved class
+			$(this).addClass('tableSaved')
+			// Give the table a unique ID so we can re-add its elements later
+			$(this).addClass('tableID-' + tables.length)
+			// Save the tables unique ID, <thead>, and <tfoot> as an object in our tables array
+			tables.push({
+				tableID: 'tableID-' + tables.length,
+				thead: $(this).find('thead:first').clone(),
+				tfoot: $(this).find('tfoot:first').clone()
+			});
+		}
+	});
+
+	// Function to add <thead> and <tfoot> to all tables in $pullOutHere
+	// This function should be called anywhere split() returns as
+	// that is the point where a column is complete and the remaining content
+	// is not going to change until the next columnize() is called
+	function fixTables($pullOutHere) {
+		// Iterate through all of our saved tables
+		for (i = 0; i < tables.length; i++) {
+			// Check if the root element is a table
+			if ($pullOutHere.is("table")) {
+				// Check if the root element has any <tfoot> elements and 
+				// is the current table id for this loop
+				if ($pullOutHere.children('tfoot').length == 0 &&
+					$pullOutHere.hasClass(tables[i].tableID)) {
+						// Add the <tfoot> to the table
+						$(tables[i].tfoot).clone().prependTo($pullOutHere);
+				}
+				// Check if the root element has any <tfoot> elements and 
+				// is the current table id for this loop
+				if ($pullOutHere.children('thead').length == 0 &&
+					$pullOutHere.hasClass(tables[i].tableID)) {
+						// Add the <tfoot> to the table
+						$(tables[i].thead).clone().prependTo($pullOutHere);
+				}
+			}
+			// Check if there are any child tables to the root element with the current table ID
+			$pullOutHere.find('table .' + tables[i].tableID).each(function () {
+				// Check if the child table has no <tfoot>
+				if ($(this).children('tfoot').length == 0) {
+					// Add the <tfoot> to the table
+					$(tables[i].tfoot).clone().prependTo(this);
+				}
+				// Check if the child table has no <thead>
+				if ($(this).children('thead').length == 0) {
+					// Add the <thead> to the table
+					$(tables[i].thead).clone().prependTo(this);
+				}
+			});
+		}
+	}
+
 	if(typeof(options.width) == "string"){
 		options.width = parseInt(options.width,10);
 		if(isNaN(options.width)){
@@ -186,6 +247,7 @@
 		 * @param targetHeight, the ideal height for the column, get as close as we can to this height
 		 */
 		function columnize($putInHere, $pullOutHere, $parentColumn, targetHeight){
+			
 			//
 			// add as many nodes to the column as we can,
 			// but stop once our height is too tall
@@ -205,6 +267,7 @@
 					// our column is on a column break, so just end here
 					return;
 				}
+				
 				appendSafe($putInHere, $(node));
 			}
 			if($putInHere[0].childNodes.length === 0) return;
@@ -275,11 +338,15 @@
 		 */
 		function split($putInHere, $pullOutHere, $parentColumn, targetHeight){
 			if($putInHere.contents(":last").find(prefixTheClassName("columnbreak", true)).length){
+				// Fix any tables that have had their <thead> and <tfoot> moved
+				fixTables($pullOutHere);
 				//
 				// our column is on a column break, so just end here
 				return;
 			}
 			if($putInHere.contents(":last").hasClass(prefixTheClassName("columnbreak"))){
+				// Fix any tables that have had their <thead> and <tfoot> moved
+				fixTables($pullOutHere);
 				//
 				// our column is on a column break, so just end here
 				return;
@@ -370,6 +437,8 @@
 					}
 				}
 			}
+			// Fix any tables that have had their <thead> and <tfoot> moved
+			fixTables($pullOutHere);
 		}
 
 
