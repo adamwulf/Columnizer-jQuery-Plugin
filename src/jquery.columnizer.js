@@ -212,7 +212,7 @@
 		columnizeIt();
 
 		if(!options.buildOnce){
-			$(window).resize(function() {
+			$(window).on('resize.columnizer', function() {
 				if(!options.buildOnce){
 					if($inBox.data("timeout")){
 						clearTimeout($inBox.data("timeout"));
