@@ -1,4 +1,4 @@
-<?
+<?php
 require 'jsmin-1.1.1.php';
 
 // Output a minified version of example.js.
