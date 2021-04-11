@@ -1,3 +1,7 @@
+## Support
+
+Has Columnizer saved you hours? Become a [Github Sponsor](https://github.com/sponsors/adamwulf) and buy me a coffee ☕️ 😄
+
 ## Documentation
 
 ### CSS Classes for Created Columns
