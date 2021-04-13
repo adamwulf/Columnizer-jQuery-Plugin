@@ -740,9 +740,9 @@
 						$col = $inBox.children().eq(i);
 						$col.width(optionWidth + "px");
 						if(i === 0){
-							$col.addClass(prefixTheClassName("first"));
+							$col.removeClass(prefixTheClassName("last"));
 						}else if(i==$inBox.children().length-1){
-							$col.addClass(prefixTheClassName("last"));
+							$col.removeClass(prefixTheClassName("first"));
 						}else{
 							$col.removeClass(prefixTheClassName("first"));
 							$col.removeClass(prefixTheClassName("last"));
