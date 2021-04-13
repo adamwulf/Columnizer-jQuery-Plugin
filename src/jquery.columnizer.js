@@ -763,6 +763,7 @@
 			}
 			options.doneFunc();
 		}
+		$inBox.data('columnizeIt', columnizeIt); // expose columnize fn
     });
  };
 
