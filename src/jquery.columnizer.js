@@ -42,6 +42,9 @@
 		ignoreImageLoading : true,
 		// should columns float left or right
 		columnFloat : "left",
+		// resize container to width of filled columns only
+		// works with width and height options set
+		resizeContainer : false,
 		// ensure the last column is never the tallest column
 		lastNeverTallest : false,
 		// (int) the minimum number of characters to jump when splitting
@@ -736,6 +739,7 @@
 					}
 				}else{
 					// it's scrolling horizontally, fix the width/classes of the columns
+					var nonEmptyColumns = 0;
 					$inBox.children().each(function(i){
 						$col = $inBox.children().eq(i);
 						$col.width(optionWidth + "px");
@@ -747,8 +751,15 @@
 							$col.removeClass(prefixTheClassName("first"));
 							$col.removeClass(prefixTheClassName("last"));
 						}
+						if($col.html() != ''){
+							nonEmptyColumns++;
+						}
 					});
-					$inBox.width($inBox.children().length * optionWidth + "px");
+					if(nonEmptyColumns && options.resizeContainer){
+						$inBox.width(nonEmptyColumns * optionWidth + "px");
+					}else{
+						$inBox.width($inBox.children().length * optionWidth + "px");
+					}
 				}
 				$inBox.append($("<br style='clear:both;'>"));
 			}
@@ -758,7 +769,7 @@
 			$inBox.find(prefixTheClassName("split", true)).find(':last' + prefixTheClassName("removeiflast", true)).remove();
 			$inBox.data("columnizing", false);
 
-			if(options.overflow){
+			if(options.overflow && options.overflow.doneFunc){
 				options.overflow.doneFunc();
 			}
 			options.doneFunc();
